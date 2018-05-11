@@ -42,7 +42,7 @@ class WalletPage extends Component {
         let loggedIn = (currentUser && userDataAvailable);
 
         if (loggedIn) {
-            fetch('http://localhost:3001/transactionPool')
+            fetch(Meteor.settings.public.apiURL + '/transactionPool')
                 .then((result) => {
                     return result.json();
                 }).then((data) => {
@@ -63,7 +63,7 @@ class WalletPage extends Component {
         let loggedIn = (currentUser && userDataAvailable);
 
         if (loggedIn) {
-            fetch('http://localhost:3001/transactionPool/' + currentUser.profile.address)
+            fetch(Meteor.settings.public.apiURL + '/transactionPool/' + currentUser.profile.address)
                 .then((result) => {
                     return result.json();
                 }).then((data) => {
@@ -84,7 +84,7 @@ class WalletPage extends Component {
         let loggedIn = (currentUser && userDataAvailable);
 
         if (loggedIn) {
-            fetch('http://localhost:3001/balance/' + currentUser.profile.address)
+            fetch(Meteor.settings.public.apiURL + '/balance/' + currentUser.profile.address)
                 .then((result) => {
                     return result.json();
                 }).then((data) => {
@@ -127,7 +127,7 @@ class WalletPage extends Component {
         const year = parseInt(document.getElementById('yearInput').value);
         const type = parseInt(document.getElementById('typeInput').value);
 
-        fetch('http://localhost:3001/sendTransaction', {
+        fetch(Meteor.settings.public.apiURL + '/sendTransaction', {
             method: 'POST',
             headers: {
                 // 'Accept': 'application/json',
@@ -153,7 +153,7 @@ class WalletPage extends Component {
         const txId = transaction.id;
         const signature = this.signTransaction(transaction);
 
-        fetch('http://localhost:3001/removeTransaction', {
+        fetch(Meteor.settings.public.apiURL + '/removeTransaction', {
             method: 'POST',
             headers: {
                 // 'Accept': 'application/json',
@@ -171,7 +171,7 @@ class WalletPage extends Component {
     confirmTrans(transaction, isApproved) {
         console.log("Confirm Transaction");
         transaction.signature = this.signTransaction(transaction);
-        fetch('http://localhost:3001/confirmBlock', {
+        fetch(Meteor.settings.public.apiURL + '/confirmBlock', {
             method: 'POST',
             headers: {
                 // 'Accept': 'application/json',
@@ -225,7 +225,7 @@ class WalletPage extends Component {
         let currentYear = new Date().getFullYear();
 
         let pendTransPool = this.state.pendTransPool;
-        let pendTransRender = [1].map((transaction) => {
+        let pendTransRender = [1].map(() => {
             return (
                 <li key='1' className="list-group-item">
                     No pending transaction found in the pool
@@ -268,7 +268,9 @@ class WalletPage extends Component {
                                 <div className="btn-group-vertical btn-group-sm" role="group"
                                      aria-label="Transaction pending">
                                     <button type="button" className="btn btn-default btn-danger"
-                                            onClick={() => {this.removeTrans(transaction)}}>
+                                            onClick={() => {
+                                                this.removeTrans(transaction)
+                                            }}>
                                         <span className="glyphicon glyphicon-trash" aria-hidden="true"></span> Remove
                                     </button>
                                 </div>
@@ -280,7 +282,7 @@ class WalletPage extends Component {
         }
 
         let apprTransPool = this.state.apprTransPool;
-        let apprTransRender = [1].map((transaction) => {
+        let apprTransRender = [1].map(() => {
             return (
                 <li key='1' className="list-group-item">
                     No transaction found for approval
@@ -323,11 +325,15 @@ class WalletPage extends Component {
                                 <div className="btn-group-vertical btn-group-sm" role="group"
                                      aria-label="Transaction approval">
                                     <button type="button" className="btn btn-default btn-success"
-                                            onClick={() => {this.confirmTrans(transaction, true)}}>
+                                            onClick={() => {
+                                                this.confirmTrans(transaction, true)
+                                            }}>
                                         <span className="glyphicon glyphicon-ok" aria-hidden="true"></span> Approve
                                     </button>
                                     <button type="button" className="btn btn-default btn-danger"
-                                            onClick={() => {this.confirmTrans(transaction, false)}}>
+                                            onClick={() => {
+                                                this.confirmTrans(transaction, false)
+                                            }}>
                                         <span className="glyphicon glyphicon-remove" aria-hidden="true"></span> Reject
                                     </button>
                                 </div>
@@ -429,7 +435,8 @@ class WalletPage extends Component {
                                                 </div>
                                             </div>
                                             <button type="submit" className="btn btn-success btn-lg">
-                                                Submit
+                                                <span className="glyphicon glyphicon-ok"
+                                                      aria-hidden="true"></span> Submit
                                             </button>
                                         </form>
                                     </div>

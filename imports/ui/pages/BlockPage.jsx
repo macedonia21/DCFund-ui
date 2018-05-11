@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {Meteor} from 'meteor/meteor';
 import {withTracker} from 'meteor/react-meteor-data';
 import {Link} from 'react-router-dom';
 import {DotLoader} from 'react-spinners';
@@ -14,7 +15,7 @@ class BlockPage extends Component {
     }
 
     componentDidMount() {
-        fetch('http://localhost:3001/blocks')
+        fetch(Meteor.settings.public.apiURL + '/blocks')
             .then((result) => {
                 return result.json();
             }).then((data) => {
@@ -33,7 +34,7 @@ class BlockPage extends Component {
         let userDataAvailable = (currentUser !== undefined);
         let loggedIn = (currentUser && userDataAvailable);
 
-        let blocks = [1].map((transaction) => {
+        let blocks = [1].map(() => {
             return (
                 <li key='1' className="list-group-item">
                     No block found

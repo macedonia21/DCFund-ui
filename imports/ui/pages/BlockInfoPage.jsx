@@ -22,7 +22,7 @@ class BlockInfoPage extends Component {
     }
 
     fetchData(blockHash) {
-        fetch('http://localhost:3001/block/' + blockHash)
+        fetch(Meteor.settings.public.apiURL + '/block/' + blockHash)
             .then((result) => {
                 return result.json();
             }).then((data) => {
@@ -65,7 +65,7 @@ class BlockInfoPage extends Component {
         let loggedIn = (currentUser && userDataAvailable);
 
         let block = this.state.block;
-        let transactions = [1].map((transaction) => {
+        let transactions = [1].map(() => {
             return (
                 <li key='1' className="list-group-item">
                     Block is not valid or no transaction found

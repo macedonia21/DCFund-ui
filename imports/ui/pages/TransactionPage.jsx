@@ -22,7 +22,7 @@ class TransactionPage extends Component {
     }
 
     fetchData(transactionID) {
-        fetch('http://localhost:3001/transaction/' + transactionID)
+        fetch(Meteor.settings.public.apiURL + '/transaction/' + transactionID)
             .then((result) => {
                 return result.json();
             }).then((data) => {
@@ -32,7 +32,7 @@ class TransactionPage extends Component {
     }
 
     formatDate(timestamp) {
-        var monthNames = [
+        const monthNames = [
             "January", "February", "March",
             "April", "May", "June", "July",
             "August", "September", "October",
@@ -41,11 +41,11 @@ class TransactionPage extends Component {
 
         const date = new Date(timestamp);
 
-        var hour = date.getHours();
-        var minute = date.getMinutes();
-        var day = date.getDate();
-        var monthIndex = date.getMonth();
-        var year = date.getFullYear();
+        const hour = date.getHours();
+        const minute = date.getMinutes();
+        const day = date.getDate();
+        const monthIndex = date.getMonth();
+        const year = date.getFullYear();
 
         return day + ' ' + monthNames[monthIndex] + ' ' + year + ' ' + hour + ':' + minute;
     }

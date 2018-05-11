@@ -22,7 +22,7 @@ class AddressPage extends Component {
     }
 
     fetchData(address) {
-        fetch('http://localhost:3001/address/' + address)
+        fetch(Meteor.settings.public.apiURL + '/address/' + address)
             .then((result) => {
                 return result.json();
             }).then((data) => {
@@ -37,7 +37,7 @@ class AddressPage extends Component {
     }
 
     formatDate(timestamp) {
-        var monthNames = [
+        const monthNames = [
             "January", "February", "March",
             "April", "May", "June", "July",
             "August", "September", "October",
@@ -46,11 +46,11 @@ class AddressPage extends Component {
 
         const date = new Date(timestamp);
 
-        var hour = date.getHours();
-        var minute = date.getMinutes();
-        var day = date.getDate();
-        var monthIndex = date.getMonth();
-        var year = date.getFullYear();
+        const hour = date.getHours();
+        const minute = date.getMinutes();
+        const day = date.getDate();
+        const monthIndex = date.getMonth();
+        const year = date.getFullYear();
 
         return day + ' ' + monthNames[monthIndex] + ' ' + year + ' ' + hour + ':' + minute;
     }
@@ -61,7 +61,7 @@ class AddressPage extends Component {
         let loggedIn = (currentUser && userDataAvailable);
 
         let transactions = this.state.transactions;
-        let transactionsRender = [1].map((transaction) => {
+        let transactionsRender = [1].map(() => {
             return (
                 <li key='1' className="list-group-item">
                     Address is not valid or no transaction found

@@ -15,10 +15,12 @@ class BlockPage extends Component {
     }
 
     componentDidMount() {
+        console.log(Meteor.settings.public.apiURL + '/blocks');
         fetch(Meteor.settings.public.apiURL + '/blocks')
             .then((result) => {
                 return result.json();
             }).then((data) => {
+            console.log(data);
             if (data.length > 0) {
                 data.sort((blockA, blockB) => {
                     return blockB.timestamp - blockA.timestamp;

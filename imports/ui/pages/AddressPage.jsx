@@ -22,16 +22,12 @@ class AddressPage extends Component {
     }
 
     fetchData(address) {
-        fetch(Meteor.settings.public.apiURL + '/address/' + address)
-            .then((result) => {
-                return result.json();
-            }).then((data) => {
-            if (data.length > 0) {
-                data.sort((transA, transB) => {
-                    return transB.timestamp - transA.timestamp;
-                });
+        Meteor.call('address.get', address, (err, res) => {
+            if (err) {
+                this.setState({transactions: null});
+            } else {
+                this.setState({transactions: res});
             }
-            this.setState({transactions: data});
             this.setState({loading: false});
         });
     }

@@ -37,61 +37,36 @@ class WalletPage extends Component {
     }
 
     fetchApprTransPool() {
-        let currentUser = this.props.currentUser;
-        let userDataAvailable = (currentUser !== undefined);
-        let loggedIn = (currentUser && userDataAvailable);
-
-        if (loggedIn) {
-            fetch(Meteor.settings.public.apiURL + '/transactionPool')
-                .then((result) => {
-                    return result.json();
-                }).then((data) => {
-                if (data.length > 0) {
-                    data.sort((transA, transB) => {
-                        return transB.txDCFs[0].timestamp - transA.txDCFs[0].timestamp;
-                    });
-                }
-                this.setState({apprTransPool: data});
-                this.setState({loadingApprTrans: false});
-            });
-        }
+        Meteor.call('transactionPool.get', true, (err, res) => {
+            if (err) {
+                this.setState({apprTransPool: null});
+            } else {
+                this.setState({apprTransPool: res});
+            }
+            this.setState({loadingApprTrans: false});
+        });
     }
 
     fetchTransPoolData() {
-        let currentUser = this.props.currentUser;
-        let userDataAvailable = (currentUser !== undefined);
-        let loggedIn = (currentUser && userDataAvailable);
-
-        if (loggedIn) {
-            fetch(Meteor.settings.public.apiURL + '/transactionPool/' + currentUser.profile.address)
-                .then((result) => {
-                    return result.json();
-                }).then((data) => {
-                if (data.length > 0) {
-                    data.sort((transA, transB) => {
-                        return transB.txDCFs[0].timestamp - transA.txDCFs[0].timestamp;
-                    });
-                }
-                this.setState({pendTransPool: data});
-                this.setState({loadingPendTrans: false});
-            });
-        }
+        Meteor.call('transactionPool.get', false, (err, res) => {
+            if (err) {
+                this.setState({pendTransPool: null});
+            } else {
+                this.setState({pendTransPool: res});
+            }
+            this.setState({loadingPendTrans: false});
+        });
     }
 
     fetchBalance() {
-        let currentUser = this.props.currentUser;
-        let userDataAvailable = (currentUser !== undefined);
-        let loggedIn = (currentUser && userDataAvailable);
-
-        if (loggedIn) {
-            fetch(Meteor.settings.public.apiURL + '/balance/' + currentUser.profile.address)
-                .then((result) => {
-                    return result.json();
-                }).then((data) => {
-                this.setState({balance: data});
-                this.setState({loadingBalance: false});
-            });
-        }
+        Meteor.call('balance.get', (err, res) => {
+            if (err) {
+                this.setState({balance: null});
+            } else {
+                this.setState({balance: res});
+            }
+            this.setState({loadingBalance: false});
+        });
     }
 
     toHexString(byteArray) {
@@ -118,7 +93,7 @@ class WalletPage extends Component {
         return null;
     }
 
-    sendCoin(event) {
+    sendCoin() {
         const wallet = Meteor.user().profile.address;
         const walletKey = Meteor.user().profile.pubKey;
         const walletOwner = Meteor.user().profile.fullName;
@@ -127,13 +102,8 @@ class WalletPage extends Component {
         const year = parseInt(document.getElementById('yearInput').value);
         const type = parseInt(document.getElementById('typeInput').value);
 
-        fetch(Meteor.settings.public.apiURL + '/sendTransaction', {
-            method: 'POST',
-            headers: {
-                // 'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
+        const requestData = {
+            data: {
                 'wallet': wallet,
                 'walletKey': walletKey,
                 'walletOwner': walletOwner,
@@ -141,50 +111,56 @@ class WalletPage extends Component {
                 'type': type,
                 'month': month,
                 'year': year
-            })
-        }).then(() => {
-            this.setState({loadingPendTrans: true});
-        });
+            }
+        };
 
-        event.preventDefault();
+        Meteor.call('newRequest.post', requestData, (err) => {
+            if (err) {
+                console.log(err.message);
+            } else {
+                this.setState({loadingPendTrans: true});
+            }
+        });
     }
 
     removeTrans(transaction) {
         const txId = transaction.id;
         const signature = this.signTransaction(transaction);
 
-        fetch(Meteor.settings.public.apiURL + '/removeTransaction', {
-            method: 'POST',
-            headers: {
-                // 'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
+        const requestData = {
+            data: {
                 'txId': txId,
-                'signature': signature,
-            })
-        }).then(() => {
-            this.setState({loadingPendTrans: true});
+                'signature': signature
+            }
+        };
+
+        Meteor.call('removeRequest.post', requestData, (err, res) => {
+            if (err) {
+                console.log(err.message);
+            } else {
+                this.setState({loadingPendTrans: true});
+            }
         });
     }
 
     confirmTrans(transaction, isApproved) {
-        console.log("Confirm Transaction");
         transaction.signature = this.signTransaction(transaction);
-        fetch(Meteor.settings.public.apiURL + '/confirmBlock', {
-            method: 'POST',
-            headers: {
-                // 'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
+
+        const requestData = {
+            data: {
                 'txId': transaction.id,
                 'signature': transaction.signature,
                 'isApproved': isApproved
-            })
-        }).then(() => {
-            this.setState({loadingApprTrans: true});
-            this.setState({loadingBalance: true});
+            }
+        };
+
+        Meteor.call('confirmRequest.post', requestData, (err, res) => {
+            if (err) {
+                console.log(err.message);
+            } else {
+                this.setState({loadingApprTrans: true});
+                this.setState({loadingBalance: true});
+            }
         });
     }
 
@@ -380,7 +356,7 @@ class WalletPage extends Component {
                                 <div>
                                     <h3>Create new request</h3>
                                     <div className='container-fluid'>
-                                        <form onSubmit={this.sendCoin.bind(this)}>
+                                        <form>
                                             <div className="row">
                                                 <div className="col-xs-12 col-sm-6 col-md-3">
                                                     <div className="form-group">
@@ -434,7 +410,9 @@ class WalletPage extends Component {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <button type="submit" className="btn btn-success btn-lg">
+                                            <button type="button" className="btn btn-success btn-lg" onClick={() => {
+                                                this.sendCoin();
+                                            }}>
                                                 <span className="glyphicon glyphicon-ok"
                                                       aria-hidden="true"></span> Submit
                                             </button>

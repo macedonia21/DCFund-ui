@@ -22,15 +22,12 @@ class BlockInfoPage extends Component {
     }
 
     fetchData(blockHash) {
-        fetch(Meteor.settings.public.apiURL + '/block/' + blockHash)
-            .then((result) => {
-                return result.json();
-            }).then((data) => {
-            this.setState({block: data});
-            this.setState({loading: false});
-        }).catch((error) => {
-            console.log(error);
-            this.setState({block: null});
+        Meteor.call('block.get', blockHash, (err, res) => {
+            if (err) {
+                this.setState({block: null});
+            } else {
+                this.setState({block: res});
+            }
             this.setState({loading: false});
         });
     }

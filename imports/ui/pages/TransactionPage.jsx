@@ -22,11 +22,12 @@ class TransactionPage extends Component {
     }
 
     fetchData(transactionID) {
-        fetch(Meteor.settings.public.apiURL + '/transaction/' + transactionID)
-            .then((result) => {
-                return result.json();
-            }).then((data) => {
-            this.setState({transaction: data});
+        Meteor.call('transaction.get', transactionID, (err, res) => {
+            if (err) {
+                this.setState({transaction: null});
+            } else {
+                this.setState({transaction: res});
+            }
             this.setState({loading: false});
         });
     }

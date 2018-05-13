@@ -15,9 +15,9 @@ class BlockPage extends Component {
     }
 
     componentDidMount() {
-        Meteor.call('blocks.get', {}, (err, res) => {
+        Meteor.call('blocks.get', (err, res) => {
             if (err) {
-                this.setState({blocks: []});
+                this.setState({blocks: null});
             } else {
                 this.setState({blocks: res});
             }

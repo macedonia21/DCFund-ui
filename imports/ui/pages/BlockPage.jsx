@@ -15,20 +15,14 @@ class BlockPage extends Component {
     }
 
     componentDidMount() {
-        if (Meteor.isServer) {
-            fetch(Meteor.settings.public.apiURL + '/blocks')
-                .then((result) => {
-                    return result.json();
-                }).then((data) => {
-                if (data.length > 0) {
-                    data.sort((blockA, blockB) => {
-                        return blockB.timestamp - blockA.timestamp;
-                    });
-                }
-                this.setState({blocks: data});
-                this.setState({loading: false});
-            });
-        }
+        Meteor.call('blocks.get', {}, (err, res) => {
+            if (err) {
+                this.setState({blocks: []});
+            } else {
+                this.setState({blocks: res});
+            }
+            this.setState({loading: false});
+        });
     }
 
     render() {

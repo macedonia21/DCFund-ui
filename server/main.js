@@ -1,5 +1,5 @@
 import {Meteor} from 'meteor/meteor';
-import '../imports/api/tasks.jsx';
+import '../imports/api/blockchain.jsx';
 import './accounts-config';
 
 Meteor.startup(() => {

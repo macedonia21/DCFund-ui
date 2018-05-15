@@ -337,8 +337,14 @@ class WalletPage extends Component {
                                 /></h3>
                                 :
                                 <div>
-                                    <h3>Deposit: {balance.deposit} DCF</h3>
-                                    <h4>{!isApprover ? 'Borrow' : 'Lend'}: {balance.lend} DCF</h4>
+                                    {balance ?
+                                        <div>
+                                            <h3>Deposit: {balance.deposit} DCF</h3>
+                                            <h4>{!isApprover ? 'Borrow' : 'Lend'}: {balance.lend} DCF</h4>
+                                        </div> :
+                                        <div>
+                                            <h3>Cannot retrieve balance</h3>
+                                        </div>}
                                 </div>
                             }
                             <h6><i>* 1 DCF = 1.000.000 VND</i></h6>

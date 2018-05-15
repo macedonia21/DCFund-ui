@@ -76,7 +76,7 @@ class AddressPage extends Component {
                             <div>
                                 <span>{txDCF.walletOwner}</span> {txDCF.type === 0 ?
                                 'deposit' :
-                                txDCF.type === 2 ? 'borrow' : 'pay'}s {this.formatDate(txDCF.timestamp)}
+                                txDCF.type === 2 ? 'borrow' : 'pay'}s at {this.formatDate(txDCF.timestamp)}
                             </div>
                             <div>
                                 <small>for period {txDCF.month}.{txDCF.year}</small>

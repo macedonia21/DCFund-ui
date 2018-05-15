@@ -32,28 +32,23 @@ class BlockInfoPage extends Component {
         });
     }
 
-    timeAgo(time) {
-        const units = [
-            {name: "second", limit: 60, in_seconds: 1},
-            {name: "minute", limit: 3600, in_seconds: 60},
-            {name: "hour", limit: 86400, in_seconds: 3600},
-            {name: "day", limit: 604800, in_seconds: 86400},
-            {name: "week", limit: 2629743, in_seconds: 604800},
-            {name: "month", limit: 31556926, in_seconds: 2629743},
-            {name: "year", limit: null, in_seconds: 31556926}
+    formatDate(timestamp) {
+        const monthNames = [
+            "January", "February", "March",
+            "April", "May", "June", "July",
+            "August", "September", "October",
+            "November", "December"
         ];
-        let diff = (new Date() - new Date(time)) / 1000;
-        if (diff < 5) return "just now";
 
-        let i = 0;
-        while (unit = units[i++]) {
-            if (diff < unit.limit || !unit.limit) {
-                diff = parseInt(Math.floor(diff / unit.in_seconds));
-                return diff + " " + unit.name + (diff > 1 ? "s" : "") + " ago";
-            }
-        }
+        const date = new Date(timestamp);
 
-        return "";
+        const hour = date.getHours();
+        const minute = date.getMinutes();
+        const day = date.getDate();
+        const monthIndex = date.getMonth();
+        const year = date.getFullYear();
+
+        return day + ' ' + monthNames[monthIndex] + ' ' + year + ' ' + hour + ':' + minute;
     }
 
     render() {
@@ -86,7 +81,7 @@ class BlockInfoPage extends Component {
                             <div>
                                 <span>{txDCF.walletOwner}</span> {txDCF.type === 0 ?
                                 'deposit' :
-                                txDCF.type === 2 ? 'borrow' : 'pay'}s {this.timeAgo(txDCF.timestamp)}
+                                txDCF.type === 2 ? 'borrow' : 'pay'}s at {this.formatDate(txDCF.timestamp)}
                             </div>
                             <div>
                                 <small>for period {txDCF.month}.{txDCF.year}</small>
@@ -173,7 +168,7 @@ class BlockInfoPage extends Component {
                                                 </div>
                                                 <div className="row">
                                                     <div className="hidden-xs col-sm-1">Time</div>
-                                                    <div className="col-xs-12 col-sm-11">{block.timestamp}</div>
+                                                    <div className="col-xs-12 col-sm-11">{this.formatDate(block.timestamp)}</div>
                                                 </div>
                                                 <div className="row">
                                                     <div className="hidden-xs col-sm-1">Diff</div>

@@ -27,6 +27,9 @@ main {
 }
 
 /*Customize classes*/
+.avatar {
+    margin-bottom: 20px;
+}
 .loader-container {
     align-items: center;
     display: flex;
@@ -45,4 +48,13 @@ main {
     height: 60px;
     line-height: 60px;
     background-color: #f5f5f5;
+}
+input[readonly] {
+    background-color: transparent !important;
+    padding-left: 0;
+    border: 0;
+    box-shadow: none;
+}
+input[readonly]:hover, input[readonly]:focus {
+    box-shadow: none;
 }

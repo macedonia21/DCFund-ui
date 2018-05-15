@@ -1,4 +1,5 @@
 import {Meteor} from 'meteor/meteor';
+import { Accounts } from 'meteor/accounts-base';
 import {HTTP} from 'meteor/http';
 import {Mongo} from 'meteor/mongo';
 import {check} from 'meteor/check';
@@ -218,4 +219,38 @@ Meteor.methods({
             throw new Meteor.Error(e.message);
         }
     },
+    'userUpdateProfile.account' (updateData) {
+        if (!Meteor.userId) {
+            throw new Meteor.Error('not-authorized');
+        }
+
+        check(updateData.data.firstName, String);
+        check(updateData.data.lastName, String);
+
+        try {
+            Meteor.users.update({_id: Meteor.userId()}, {
+                $set: {
+                    "profile.firstName": updateData.data.firstName,
+                    "profile.lastName": updateData.data.lastName,
+                    "profile.fullName": updateData.data.firstName + " " + updateData.data.lastName
+                }
+            });
+        } catch (e) {
+            throw new Meteor.Error(e.message);
+        }
+    },
+
+    'userChangePassword.account' (updateData) {
+        if (!Meteor.userId) {
+            throw new Meteor.Error('not-authorized');
+        }
+
+        check(updateData.data.newPass, String);
+
+        try {
+            Accounts.setPassword(Meteor.userId(), updateData.data.newPass)
+        } catch (e) {
+            throw new Meteor.Error(e.message);
+        }
+    }
 });

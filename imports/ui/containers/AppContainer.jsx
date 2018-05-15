@@ -89,8 +89,8 @@ export default class AppContainer extends Component {
                 </main>
                 <footer className="footer">
                     <div className="container">
-                        <span className="text-muted">Copyright © {new Date().getFullYear()}
-                            DCFund Wallet <i>Alpha</i>
+                        <span className="text-muted">
+                            Copyright © {new Date().getFullYear()} DCFund Wallet <i>Alpha</i>
                         </span>
                     </div>
                 </footer>

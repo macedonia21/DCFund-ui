@@ -3,6 +3,7 @@ html {
     position: relative;
     min-height: 100% !important;
 }
+
 body {
     padding-top: 60px;
     padding-bottom: 60px;
@@ -10,18 +11,20 @@ body {
     overflow-x: hidden;
     min-width: 640px;
 }
+
 main {
     padding-bottom: 20px;
 }
-
 
 /*Overide bootstrap CSS*/
 .container-fluid {
     /*margin-bottom: 20px;*/
 }
+
 .navbar-brand {
     font-size: 24px;
 }
+
 .input-lg, .btn-lg {
     /*border-radius: 50px;*/
 }
@@ -30,16 +33,19 @@ main {
 .avatar {
     margin-bottom: 20px;
 }
+
 .loader-container {
     align-items: center;
     display: flex;
     flex-direction: column;
 }
+
 .form-signin, .form-signup {
     max-width: 330px;
     padding: 15px;
     margin: 0 auto;
 }
+
 .footer {
     margin-top: 20px;
     position: absolute;
@@ -49,12 +55,140 @@ main {
     line-height: 60px;
     background-color: #f5f5f5;
 }
+
+.loader {
+    display: inline-block;
+}
+
 input[readonly] {
     background-color: transparent !important;
     padding-left: 0;
     border: 0;
     box-shadow: none;
 }
+
 input[readonly]:hover, input[readonly]:focus {
     box-shadow: none;
+}
+
+/* Notification */
+.notification-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 999999;
+    width: 320px;
+    padding: 0 15px;
+    max-height: calc(100% - 30px);
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.notification, .notification-container {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.notification {
+    padding: 15px 15px 15px 58px;
+    border-radius: 2px;
+    color: #fff;
+    background-color: #ccc;
+    -webkit-box-shadow: 0 0 12px 0 rgba(153,153,153,0.75);
+    -moz-box-shadow: 0 0 12px 0 rgba(153,153,153,0.75);
+    box-shadow: 0 0 12px 0 rgba(153,153,153,0.75);
+    cursor: pointer;
+    font-size: 1em;
+    line-height: 1.2em;
+    position: relative;
+    opacity: .9;
+    margin: 15px 0;
+}
+
+.notification .title {
+    font-size: 1em;
+    line-height: 1.2em;
+    font-weight: 700;
+    margin: 0 0 5px;
+}
+
+.notification:focus, .notification:hover {
+    opacity: 1;
+}
+
+.notification-enter {
+    visibility: hidden;
+    -webkit-transform: translate3d(100%, 0, 0);
+    -moz-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
+}
+
+.notification-enter.notification-enter-active {
+    -webkit-transition: all .4s ease-out;
+    -moz-transition: all .4s ease-out;
+    transition: all .4s ease-out;
+}
+
+.notification-enter.notification-enter-active, .notification-leave {
+    visibility: visible;
+    -webkit-transform: translateZ(0);
+    -moz-transform: translateZ(0);
+    transform: translateZ(0);
+}
+
+.notification-leave.notification-leave-active {
+    visibility: hidden;
+    -webkit-transform: translate3d(100%, 0, 0);
+    -moz-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
+    -webkit-transition: all .4s ease-in;
+    -moz-transition: all .4s ease-in;
+    transition: all .4s ease-in;
+}
+
+.notification:before {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    margin-top: -14px;
+    display: block;
+    font-family: "Glyphicons Halflings", sans-serif;
+    width: 28px;
+    height: 28px;
+    font-size: 28px;
+    text-align: center;
+    line-height: 28px;
+}
+
+.notification-info {
+    background-color: #5bc0de;
+}
+
+.notification-info:before {
+    content:"\e086";
+}
+
+.notification-success {
+    background-color: #86bc25;
+}
+
+.notification-success:before {
+    content:"\e084";
+}
+
+.notification-warning {
+    background-color: #f0ad4e;
+}
+
+.notification-warning:before {
+    content:"\e101";
+}
+
+.notification-error {
+    background-color: #d9534f;
+}
+
+.notification-error:before {
+    content:"\e083";
 }

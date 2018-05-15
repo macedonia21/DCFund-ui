@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import {Accounts} from 'meteor/accounts-base';
+import {NotificationManager} from 'react-notifications';
 import {withHistory} from 'react-router-dom';
 import {withTracker} from 'meteor/react-meteor-data';
 import {DotLoader} from 'react-spinners';
@@ -26,7 +28,7 @@ class ProfilePage extends Component {
     logout() {
         Meteor.logout((err) => {
             if (err) {
-                console.log(err.reason);
+                NotificationManager.error(err.message, 'Error', 3000);
             } else {
                 this.props.history.push('/login');
             }
@@ -45,20 +47,20 @@ class ProfilePage extends Component {
             }
         };
 
-        this.setState({
-            profileUpdate: false,
-            profileUpdating: true
-        });
+        this.setState({profileUpdating: true});
         Meteor.call('userUpdateProfile.account', updateData, (err, res) => {
             if (err) {
-                console.log(err.message);
-            } else {
-                console.log('Profile updated');
-            }
-            setTimeout(() => {
+                NotificationManager.error('Cannot update profile: ' + err.message, 'Error', 3000);
                 this.setState({profileUpdating: false});
-            }, 1000);
-
+            } else {
+                NotificationManager.success('Your profile is updated', 'Success', 3000);
+                setTimeout(() => {
+                    this.setState({
+                        profileUpdate: false,
+                        profileUpdating: false
+                    });
+                }, 1000);
+            }
         });
     }
 
@@ -67,25 +69,32 @@ class ProfilePage extends Component {
         const newPass = document.getElementById('newPassInput').value.toString();
         const confirmPass = document.getElementById('confirmPassInput').value.toString();
 
-        const updateData = {
-            data: {
-                'newPass': newPass
-            }
-        };
+        if (newPass === currentPass) {
+            NotificationManager.error('Cannot change password: New password must different from current password', 'Error', 3000);
+            return;
+        }
+
+        if (newPass !== confirmPass) {
+            NotificationManager.error('Cannot change password: Confirm password not correct', 'Error', 3000);
+            return;
+        }
 
         this.setState({passwordUpdating: true});
-        Meteor.call('userChangePassword.account', updateData, (err, res) => {
+        Accounts.changePassword(currentPass, newPass, (err) => {
             if (err) {
-                console.log(err.message);
-            } else {
-                console.log('Password changed');
-            }
-            setTimeout(() => {
+                NotificationManager.error('Cannot change password: ' + err.message, 'Error', 3000);
                 this.setState({passwordUpdating: false});
-            }, 1000);
+            } else {
+                NotificationManager.success('Your password is changed, logout in few seconds', 'Success', 3000);
+                setTimeout(() => {
+                    this.setState({
+                        passwordUpdate: false,
+                        passwordUpdating: false
+                    });
+                    this.logout();
+                }, 3000);
+            }
         });
-
-        this.logout();
     }
 
     render() {
@@ -96,7 +105,6 @@ class ProfilePage extends Component {
         let lastName = '';
 
         if (loggedIn) {
-            console.log('reset name');
             firstName = currentUser.profile.firstName;
             lastName = currentUser.profile.lastName;
         }
@@ -119,7 +127,7 @@ class ProfilePage extends Component {
                         <div className="row">
                             <div className="col-sm-12 col-md-4">
                                 <div className="text-center">
-                                    <div className="avatar">
+                                    <div className="avatar fade in">
                                         {renderHTML(reactHashAvatar(
                                             currentUser.profile.address +
                                             firstName + lastName,
@@ -185,23 +193,34 @@ class ProfilePage extends Component {
                                                 onClick={() => {
                                                     if (this.state.profileUpdate) {
                                                         this.updateProfile();
+                                                    } else {
+                                                        this.setState({profileUpdate: true});
                                                     }
-                                                    this.setState({profileUpdate: !this.state.profileUpdate});
                                                 }}
                                                 disabled={this.state.profileUpdating}>
-                                            {!this.state.profileUpdating ? 'Update profile' :
-                                                <DotLoader
-                                                    size={20}
-                                                    color={'#ffffff'}
-                                                    loading={this.state.profileUpdating}
-                                                />}
+                                            {!this.state.profileUpdating ?
+                                                <div>
+                                                    <span className="glyphicon glyphicon-pencil" aria-hidden="true">
+                                                    </span>&nbsp;
+                                                    Update profile
+                                                </div> :
+                                                <div>Processing&nbsp;
+                                                    <div className="loader">
+                                                        <DotLoader
+                                                            size={14}
+                                                            color={'#ffffff'}
+                                                            loading={this.state.profileUpdating}
+                                                        /></div>
+                                                </div>}
                                         </button>
-                                        {this.state.profileUpdate ?
+                                        {this.state.profileUpdate && !this.state.profileUpdating ?
                                             <button type="button" className="btn btn-default"
                                                     onClick={() => {
                                                         this.setState({profileUpdate: false});
                                                     }}
                                                     disabled={this.state.profileUpdating}>
+                                                <span className="glyphicon glyphicon-remove" aria-hidden="true">
+                                                    </span>&nbsp;
                                                 Cancel
                                             </button> : ''}
                                     </div>
@@ -234,22 +253,34 @@ class ProfilePage extends Component {
                                                 onClick={() => {
                                                     if (this.state.passwordUpdate) {
                                                         this.changePassword();
+                                                    } else {
+                                                        this.setState({passwordUpdate: true});
                                                     }
-                                                    this.setState({passwordUpdate: !this.state.passwordUpdate});
                                                 }}
                                                 disabled={this.state.passwordUpdating}>
-                                            {!this.state.passwordUpdating ? 'Change password' :
-                                            <DotLoader
-                                                size={20}
-                                                color={'#ffffff'}
-                                                loading={this.state.passwordUpdating}
-                                            />}
+                                            {!this.state.passwordUpdating ?
+                                                <div>
+                                                    <span className="glyphicon glyphicon-lock" aria-hidden="true">
+                                                    </span>&nbsp;
+                                                    Change password
+                                                </div> :
+                                                <div>Processing&nbsp;
+                                                    <div className="loader">
+                                                        <DotLoader
+                                                            size={14}
+                                                            color={'#ffffff'}
+                                                            loading={this.state.passwordUpdating}
+                                                        /></div>
+                                                </div>}
                                         </button>
                                         {this.state.passwordUpdate ?
                                             <button type="button" className="btn btn-default"
                                                     onClick={() => {
                                                         this.setState({passwordUpdate: false});
-                                                    }}>
+                                                    }}
+                                                    disabled={this.state.passwordUpdating}>
+                                                <span className="glyphicon glyphicon-remove" aria-hidden="true">
+                                                    </span>&nbsp;
                                                 Cancel
                                             </button> : ''}
                                     </div>

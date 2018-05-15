@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {ec} from 'elliptic';
+import {NotificationManager} from 'react-notifications';
 import {withTracker} from 'meteor/react-meteor-data';
 import {Link} from 'react-router-dom';
 import {DotLoader} from 'react-spinners';
@@ -16,7 +17,10 @@ class WalletPage extends Component {
             balance: {},
             pendTransPool: [],
             apprTransPool: [],
-            didMount: false
+            didMount: false,
+
+            requestSending: false,
+            requestRemoving: false
         };
     }
 
@@ -114,11 +118,16 @@ class WalletPage extends Component {
             }
         };
 
+        this.setState({requestSending: true});
         Meteor.call('newRequest.post', requestData, (err) => {
             if (err) {
-                console.log(err.message);
+                NotificationManager.error(err.message, 'Error', 3000);
             } else {
+                NotificationManager.success('New request submitted', 'Success', 3000);
                 this.setState({loadingPendTrans: true});
+                setTimeout(() => {
+                    this.setState({requestSending: false});
+                }, 1000);
             }
         });
     }
@@ -136,7 +145,7 @@ class WalletPage extends Component {
 
         Meteor.call('removeRequest.post', requestData, (err, res) => {
             if (err) {
-                console.log(err.message);
+                NotificationManager.error(err.message, 'Error', 3000);
             } else {
                 this.setState({loadingPendTrans: true});
             }
@@ -416,11 +425,25 @@ class WalletPage extends Component {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <button type="button" className="btn btn-success btn-lg" onClick={() => {
-                                                this.sendCoin();
-                                            }}>
-                                                <span className="glyphicon glyphicon-ok"
-                                                      aria-hidden="true"></span> Submit
+                                            <button type="button" className="btn btn-success btn-lg"
+                                                    onClick={() => {
+                                                        this.sendCoin();
+                                                    }}
+                                                    disabled={this.state.requestSending}>
+                                                {!this.state.requestSending ?
+                                                    <div>
+                                                <span className="glyphicon glyphicon-ok" aria-hidden="true">
+                                                </span>&nbsp;
+                                                        Submit
+                                                    </div> :
+                                                    <div>Processing&nbsp;
+                                                        <div className="loader">
+                                                            <DotLoader
+                                                                size={18}
+                                                                color={'#ffffff'}
+                                                                loading={this.state.requestSending}
+                                                            /></div>
+                                                    </div>}
                                             </button>
                                         </form>
                                     </div>

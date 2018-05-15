@@ -1,7 +1,6 @@
 import {Meteor} from 'meteor/meteor';
-import { Accounts } from 'meteor/accounts-base';
+import {Accounts} from 'meteor/accounts-base';
 import {HTTP} from 'meteor/http';
-import {Mongo} from 'meteor/mongo';
 import {check} from 'meteor/check';
 
 if (Meteor.isServer) {
@@ -10,7 +9,7 @@ if (Meteor.isServer) {
 }
 
 Meteor.methods({
-    'blocks.get' () {
+    'blocks.get'() {
         if (!Meteor.userId) {
             throw new Meteor.Error('not-authorized');
         }
@@ -34,7 +33,7 @@ Meteor.methods({
         }
     },
 
-    'block.get' (blockHash) {
+    'block.get'(blockHash) {
         if (!Meteor.userId) {
             throw new Meteor.Error('not-authorized');
         }
@@ -53,7 +52,7 @@ Meteor.methods({
         }
     },
 
-    'address.get' (address) {
+    'address.get'(address) {
         if (!Meteor.userId) {
             throw new Meteor.Error('not-authorized');
         }
@@ -74,7 +73,7 @@ Meteor.methods({
         }
     },
 
-    'transaction.get' (transaction) {
+    'transaction.get'(transaction) {
         if (!Meteor.userId) {
             throw new Meteor.Error('not-authorized');
         }
@@ -93,7 +92,7 @@ Meteor.methods({
         }
     },
 
-    'balance.get' () {
+    'balance.get'() {
         if (!Meteor.userId) {
             throw new Meteor.Error('not-authorized');
         }
@@ -110,7 +109,7 @@ Meteor.methods({
         }
     },
 
-    'balance.get' () {
+    'balance.get'() {
         if (!Meteor.userId) {
             throw new Meteor.Error('not-authorized');
         }
@@ -127,7 +126,7 @@ Meteor.methods({
         }
     },
 
-    'transactionPool.get' (isApprovalPool) {
+    'transactionPool.get'(isApprovalPool) {
         if (!Meteor.userId) {
             throw new Meteor.Error('not-authorized');
         }
@@ -154,7 +153,7 @@ Meteor.methods({
         }
     },
 
-    'newRequest.post' (requestData) {
+    'newRequest.post'(requestData) {
         if (!Meteor.userId) {
             throw new Meteor.Error('not-authorized');
         }
@@ -179,7 +178,7 @@ Meteor.methods({
         }
     },
 
-    'removeRequest.post' (requestData) {
+    'removeRequest.post'(requestData) {
         if (!Meteor.userId) {
             throw new Meteor.Error('not-authorized');
         }
@@ -199,7 +198,7 @@ Meteor.methods({
         }
     },
 
-    'confirmRequest.post' (requestData) {
+    'confirmRequest.post'(requestData) {
         if (!Meteor.userId) {
             throw new Meteor.Error('not-authorized');
         }
@@ -219,7 +218,7 @@ Meteor.methods({
             throw new Meteor.Error(e.message);
         }
     },
-    'userUpdateProfile.account' (updateData) {
+    'userUpdateProfile.account'(updateData) {
         if (!Meteor.userId) {
             throw new Meteor.Error('not-authorized');
         }
@@ -235,20 +234,6 @@ Meteor.methods({
                     "profile.fullName": updateData.data.firstName + " " + updateData.data.lastName
                 }
             });
-        } catch (e) {
-            throw new Meteor.Error(e.message);
-        }
-    },
-
-    'userChangePassword.account' (updateData) {
-        if (!Meteor.userId) {
-            throw new Meteor.Error('not-authorized');
-        }
-
-        check(updateData.data.newPass, String);
-
-        try {
-            Accounts.setPassword(Meteor.userId(), updateData.data.newPass)
         } catch (e) {
             throw new Meteor.Error(e.message);
         }

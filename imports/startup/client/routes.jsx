@@ -1,5 +1,6 @@
 import React from 'react'
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+import {NotificationContainer} from 'react-notifications';
 
 // containers
 import AppContainer from '../../ui/containers/AppContainer'
@@ -17,6 +18,7 @@ export const renderRoutes = () => (
                 <Route path="/signup" component={SignupPage}/>
                 <Route component={AppContainer}/>
             </Switch>
+            <NotificationContainer/>
         </div>
     </Router>
 );

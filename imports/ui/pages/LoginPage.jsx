@@ -1,13 +1,11 @@
 import React, {Component} from 'react'
+import {NotificationManager} from 'react-notifications';
 import {withHistory, Link} from 'react-router-dom'
 import {createContainer} from 'meteor/react-meteor-data'
 
 export default class LoginPage extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            error: ''
-        };
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
@@ -17,9 +15,7 @@ export default class LoginPage extends Component {
         let password = document.getElementById('login-password').value;
         Meteor.loginWithPassword(email, password, (err) => {
             if (err) {
-                this.setState({
-                    error: err.reason
-                });
+                NotificationManager.error('Account or password not valid', 'Error', 3000);
             } else {
                 this.props.history.push('/');
             }
@@ -27,12 +23,10 @@ export default class LoginPage extends Component {
     }
 
     render() {
-        const error = this.state.error;
         return (
             <div className="container">
                 <form id="login-form" className="form center-block form-signin" onSubmit={this.handleSubmit}>
                     <h1 className="text-center">Login</h1>
-                    {error.length > 0 ? <div className="alert alert-danger fade in">{error}</div> : ''}
                     <div className="form-group">
                         <input type="text" id="login-email" className="form-control input-lg"
                                placeholder="Username or Email" required/>

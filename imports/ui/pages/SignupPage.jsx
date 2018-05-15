@@ -1,13 +1,11 @@
 import React, {Component} from 'react';
+import {NotificationManager} from 'react-notifications';
 import {withHistory, Link} from 'react-router-dom';
 import {Accounts} from 'meteor/accounts-base';
 
 export default class SignupPage extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            error: ''
-        };
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
@@ -29,22 +27,21 @@ export default class SignupPage extends Component {
             isUser: isUser
         }, (err) => {
             if (err) {
-                this.setState({
-                    error: err.reason
-                });
+                NotificationManager.error(err.reason, 'Error', 3000);
             } else {
-                this.props.history.push('/');
+                NotificationManager.success('Your account created, open wallet in few seconds', 'Success', 3000);
+                setTimeout(() => {
+                    this.props.history.push('/');
+                }, 3000);
             }
         });
     }
 
     render() {
-        const error = this.state.error;
         return (
             <div className="container">
                 <form id="login-form" className="form center-block form-signup" onSubmit={this.handleSubmit}>
                     <h1 className="text-center">Sign up</h1>
-                    {error.length > 0 ? <div className="alert alert-danger fade in">{error}</div> : ''}
                     <div className="form-group">
                         <input type="text" id="signup-username" className="form-control input-lg" placeholder="Username"
                                required/>

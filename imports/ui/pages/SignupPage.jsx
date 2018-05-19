@@ -8,8 +8,8 @@ export default class SignupPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            passStrength: 'weak',
-            passConfirmStrength: 'weak'
+            passStrength: 'invalid',
+            passConfirmStrength: 'invalid'
         };
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -22,7 +22,15 @@ export default class SignupPage extends Component {
         const email = ReactDOM.findDOMNode(this.refs.inputEmail).value.trim();
         const password = ReactDOM.findDOMNode(this.refs.inputPass).value.trim();
         const confirmPassword = ReactDOM.findDOMNode(this.refs.inputConfirmPass).value.trim();
-        const isUser = true;
+        const isUser = true
+
+        if (password.length < 6) {
+            ReactDOM.findDOMNode(this.refs.inputPass).value = '';
+            ReactDOM.findDOMNode(this.refs.inputConfirmPass).value = '';
+
+            NotificationManager.error('Password must have at least 6 characters', 'Error', 3000);
+            return;
+        }
 
         if (password !== confirmPassword) {
             ReactDOM.findDOMNode(this.refs.inputPass).value = '';
@@ -66,6 +74,7 @@ export default class SignupPage extends Component {
     estimatePassStreng(ref) {
         var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
         var mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
+        var weakRegex = new RegExp("^(?=.{6,})");
 
         let pass = '';
         if (ref === 'inputPass') {
@@ -79,8 +88,10 @@ export default class SignupPage extends Component {
             result = 'strong';
         } else if (mediumRegex.test(pass)) {
             result = 'medium';
-        } else {
+        } else if (weakRegex.test(pass)) {
             result = 'weak';
+        } else {
+            result = 'invalid';
         }
         if (ref === 'inputPass') {
             this.setState({passStrength: result});
@@ -113,10 +124,13 @@ export default class SignupPage extends Component {
                                required/>
                     </div>
                     <div className="form-group inner-addon-lg right-addon">
-                        {passStrength === 'weak' ? '' :
+                        {passStrength === 'weak' ?
+                            <i className="glyphicon glyphicon-certificate text-brand-error"></i> :
                             (passStrength === 'medium' ?
-                                <i className="glyphicon glyphicon-exclamation-sign text-warning"></i> :
-                                <i className="glyphicon glyphicon-ok-sign text-success"></i>)}
+                                <i className="glyphicon glyphicon-certificate text-brand-warning"></i> :
+                                (passStrength === 'strong' ?
+                                <i className="glyphicon glyphicon-certificate text-brand-success"></i>:
+                                ''))}
                         <input type="password" ref="inputPass" id="signup-password" className="form-control input-lg"
                                placeholder="Password" required
                                 onChange={() => {
@@ -124,15 +138,8 @@ export default class SignupPage extends Component {
                                 }}/>
                     </div>
                     <div className="form-group inner-addon-lg right-addon">
-                        {passConfirmStrength === 'weak' ? '' :
-                            (passConfirmStrength === 'medium' ?
-                                <i className="glyphicon glyphicon-exclamation-sign text-warning"></i> :
-                                <i className="glyphicon glyphicon-ok-sign text-success"></i>)}
                         <input type="password" ref="inputConfirmPass"  id="signup-confirm-password" className="form-control input-lg"
-                               placeholder="Confirm password" required
-                               onChange={() => {
-                                   this.estimatePassStreng('inputConfirmPass');
-                               }}/>
+                               placeholder="Confirm password" required/>
                     </div>
                     <div className="form-group">
                         <input type="submit" id="login-button" className="btn btn-lg btn-success btn-block"

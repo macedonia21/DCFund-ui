@@ -18,8 +18,8 @@ class ProfilePage extends Component {
             passwordUpdate: false,
             passwordUpdating: false,
 
-            passStrength: 'weak',
-            passConfirmStrength: 'weak'
+            passStrength: 'invalid',
+            passConfirmStrength: 'invalid'
         };
 
         this.logout = this.logout.bind(this);
@@ -32,6 +32,7 @@ class ProfilePage extends Component {
     estimatePassStreng(ref) {
         var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
         var mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
+        var weakRegex = new RegExp("^(?=.{6,})");
 
         let pass = '';
         if (ref === 'inputPass') {
@@ -45,8 +46,10 @@ class ProfilePage extends Component {
             result = 'strong';
         } else if (mediumRegex.test(pass)) {
             result = 'medium';
-        } else {
+        } else if (weakRegex.test(pass)) {
             result = 'weak';
+        } else {
+            result = 'invalid';
         }
         if (ref === 'inputPass') {
             this.setState({passStrength: result});
@@ -269,10 +272,13 @@ class ProfilePage extends Component {
                                             <div className="form-group inner-addon right-addon">
                                                 <label className="col-sm-4 control-label">New password:</label>
                                                 <div className="col-sm-8">
-                                                    {passStrength === 'weak' ? '' :
+                                                    {passStrength === 'weak' ?
+                                                        <i className="glyphicon glyphicon-certificate text-brand-error pad-right"></i> :
                                                         (passStrength === 'medium' ?
-                                                            <i className="glyphicon glyphicon-exclamation-sign text-warning pad-right"></i> :
-                                                            <i className="glyphicon glyphicon-ok-sign text-success pad-right"></i>)}
+                                                            <i className="glyphicon glyphicon-certificate text-brand-warning pad-right"></i> :
+                                                            (passStrength === 'strong' ?
+                                                                <i className="glyphicon glyphicon-certificate text-brand-success pad-right"></i>:
+                                                                ''))}
                                                     <input className="form-control" ref="inputPass"
                                                            type="password" id="newPassInput" required
                                                            onChange={() => {
@@ -283,15 +289,8 @@ class ProfilePage extends Component {
                                             <div className="form-group inner-addon right-addon">
                                                 <label className="col-sm-4 control-label">Confirm password:</label>
                                                 <div className="col-sm-8">
-                                                    {passConfirmStrength === 'weak' ? '' :
-                                                        (passConfirmStrength === 'medium' ?
-                                                            <i className="glyphicon glyphicon-exclamation-sign text-warning pad-right"></i> :
-                                                            <i className="glyphicon glyphicon-ok-sign text-success pad-right"></i>)}
                                                     <input className="form-control" ref="inputConfirmPass"
-                                                           type="password" id="confirmPassInput" required
-                                                           onChange={() => {
-                                                               this.estimatePassStreng('inputConfirmPass');
-                                                           }}/>
+                                                           type="password" id="confirmPassInput" required/>
                                                 </div>
                                             </div>
                                         </div> : ''}

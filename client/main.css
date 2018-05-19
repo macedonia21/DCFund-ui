@@ -81,8 +81,9 @@ input[readonly]:hover, input[readonly]:focus {
 
 /* style icon */
 .inner-addon-lg .glyphicon {
+    font-size: 18px;
     position: absolute;
-    padding: 15px;
+    padding: 13px;
     pointer-events: none;
 }
 .inner-addon .glyphicon {
@@ -93,12 +94,12 @@ input[readonly]:hover, input[readonly]:focus {
 
 .inner-addon .glyphicon.pad-right {
     position: absolute;
-    padding: 10px 30px 10px 10px;
+    padding: 9px 27px 9px 9px;
     pointer-events: none;
 }
 .inner-addon .glyphicon.pad-left {
     position: absolute;
-    padding: 10px 30px 10px 20px;
+    padding: 9px 9px 9px 27px;
     pointer-events: none;
 }
 
@@ -109,6 +110,19 @@ input[readonly]:hover, input[readonly]:focus {
 /* add padding  */
 .left-addon input  { padding-left:  30px; }
 .right-addon input { padding-right: 30px; }
+
+.text-brand-success {
+    color: #86bc25;
+}
+.text-brand-info {
+    color: #5bc0de;
+}
+.text-brand-warning {
+    color: #f0ad4e;
+}
+.text-brand-error {
+    color: #d9534f;
+}
 
 /* Transaction Type List Item */
 .item-trans-deposit {

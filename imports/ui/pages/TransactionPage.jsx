@@ -70,7 +70,9 @@ class TransactionPage extends Component {
                 return (
                     <div key={txDCF.timestamp}>
                         <div>
-                            <span className="lead"><b>{txDCF.amount} DCF</b>&nbsp;</span>
+                            <span className="lead"><b>{txDCF.amount} DCF</b></span>
+                        </div>
+                        <div>
                             <small>from&nbsp;
                                 <Link to={`/address/${txDCF.wallet}`}>
                                     {txDCF.wallet}
@@ -126,18 +128,16 @@ class TransactionPage extends Component {
                                                         <div className="btn-group-vertical btn-group-sm" role="group"
                                                              aria-label="Transaction pending">
                                                             {transaction.isApproved ?
-                                                                <div className="text-success">
-                                                                    <span
-                                                                        className="glyphicon glyphicon-ok"
-                                                                        aria-hidden="true">
+                                                                <span className="label label-success">
+                                                                    <span className="glyphicon glyphicon-ok"
+                                                                          aria-hidden="true">
                                                                     </span> Approved
-                                                                </div> :
-                                                                <div className="text-danger">
-                                                                    <span
-                                                                    className="glyphicon glyphicon-remove"
-                                                                    aria-hidden="true">
+                                                                </span> :
+                                                                <span className="label label-danger">
+                                                                    <span className="glyphicon glyphicon-remove"
+                                                                          aria-hidden="true">
                                                                     </span> Rejected
-                                                                </div>}
+                                                                </span>}
                                                         </div>
                                                     </div>
                                                 </div>

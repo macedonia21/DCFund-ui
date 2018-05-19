@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import ReactDOM from 'react-dom';
 import {Accounts} from 'meteor/accounts-base';
 import {NotificationManager} from 'react-notifications';
 import {withHistory} from 'react-router-dom';
@@ -15,7 +16,10 @@ class ProfilePage extends Component {
             profileUpdate: false,
             profileUpdating: false,
             passwordUpdate: false,
-            passwordUpdating: false
+            passwordUpdating: false,
+
+            passStrength: 'weak',
+            passConfirmStrength: 'weak'
         };
 
         this.logout = this.logout.bind(this);
@@ -23,6 +27,32 @@ class ProfilePage extends Component {
 
     handleChange(val) {
         return val;
+    }
+
+    estimatePassStreng(ref) {
+        var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+        var mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
+
+        let pass = '';
+        if (ref === 'inputPass') {
+            pass = ReactDOM.findDOMNode(this.refs.inputPass).value.trim();
+        } else {
+            pass = ReactDOM.findDOMNode(this.refs.inputConfirmPass).value.trim();
+        }
+
+        let result = '';
+        if (strongRegex.test(pass)) {
+            result = 'strong';
+        } else if (mediumRegex.test(pass)) {
+            result = 'medium';
+        } else {
+            result = 'weak';
+        }
+        if (ref === 'inputPass') {
+            this.setState({passStrength: result});
+        } else {
+            this.setState({passConfirmStrength: result});
+        }
     }
 
     logout() {
@@ -108,6 +138,9 @@ class ProfilePage extends Component {
             firstName = currentUser.profile.firstName;
             lastName = currentUser.profile.lastName;
         }
+
+        const passStrength = this.state.passStrength;
+        const passConfirmStrength = this.state.passConfirmStrength;
 
         return (
             <div>
@@ -233,18 +266,32 @@ class ProfilePage extends Component {
                                                            type="password" id="currentPassInput"/>
                                                 </div>
                                             </div>
-                                            <div className="form-group">
+                                            <div className="form-group inner-addon right-addon">
                                                 <label className="col-sm-4 control-label">New password:</label>
                                                 <div className="col-sm-8">
-                                                    <input className="form-control"
-                                                           type="password" id="newPassInput"/>
+                                                    {passStrength === 'weak' ? '' :
+                                                        (passStrength === 'medium' ?
+                                                            <i className="glyphicon glyphicon-exclamation-sign text-warning pad-right"></i> :
+                                                            <i className="glyphicon glyphicon-ok-sign text-success pad-right"></i>)}
+                                                    <input className="form-control" ref="inputPass"
+                                                           type="password" id="newPassInput" required
+                                                           onChange={() => {
+                                                               this.estimatePassStreng('inputPass');
+                                                           }}/>
                                                 </div>
                                             </div>
-                                            <div className="form-group">
+                                            <div className="form-group inner-addon right-addon">
                                                 <label className="col-sm-4 control-label">Confirm password:</label>
                                                 <div className="col-sm-8">
-                                                    <input className="form-control"
-                                                           type="password" id="confirmPassInput"/>
+                                                    {passConfirmStrength === 'weak' ? '' :
+                                                        (passConfirmStrength === 'medium' ?
+                                                            <i className="glyphicon glyphicon-exclamation-sign text-warning pad-right"></i> :
+                                                            <i className="glyphicon glyphicon-ok-sign text-success pad-right"></i>)}
+                                                    <input className="form-control" ref="inputConfirmPass"
+                                                           type="password" id="confirmPassInput" required
+                                                           onChange={() => {
+                                                               this.estimatePassStreng('inputConfirmPass');
+                                                           }}/>
                                                 </div>
                                             </div>
                                         </div> : ''}

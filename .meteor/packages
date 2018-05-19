@@ -24,6 +24,6 @@ shell-server@0.3.1
 dynamic-import@0.3.0
 msavin:mongol
 less
-nemo64:bootstrap
+nemo64:bootstrap@=3.3.5_2
 alanning:roles
 http

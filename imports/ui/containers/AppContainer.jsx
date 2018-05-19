@@ -41,7 +41,6 @@ export default class AppContainer extends Component {
     }
 
     render() {
-        const currentUser = this.state.currentUser;
         return (
             <div>
                 <header>
@@ -58,15 +57,8 @@ export default class AppContainer extends Component {
                             </div>
                             <div className="collapse navbar-collapse" id="myNavbar">
                                 <ul className="nav navbar-nav">
-                                    <li className="dropdown disabled">
-                                        <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button"
-                                           aria-haspopup="true" aria-expanded="false">
-                                            Network: Testnet <span className="caret"></span>
-                                        </a>
-                                        <ul className="dropdown-menu">
-                                            <li><a href="#">Mainnet</a></li>
-                                            <li><a href="#">Testnet</a></li>
-                                        </ul>
+                                    <li>
+                                        <p className="navbar-text">Network: Testnet</p>
                                     </li>
                                 </ul>
                                 <ul className="nav navbar-nav navbar-right">

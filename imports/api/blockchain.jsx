@@ -109,17 +109,72 @@ Meteor.methods({
         }
     },
 
+    'allBalances.get'() {
+        if (!Meteor.userId) {
+            throw new Meteor.Error('not-authorized');
+        }
+
+        try {
+            const result = HTTP.get(Meteor.settings.public.apiURL + '/balances');
+            if (result) {
+                return result.data;
+            } else {
+                return null;
+            }
+        } catch (e) {
+            throw new Meteor.Error(e.message);
+        }
+    },
+
     'balance.get'() {
         if (!Meteor.userId) {
             throw new Meteor.Error('not-authorized');
         }
 
         try {
-            const result = HTTP.get(Meteor.settings.public.apiURL + '/balance/' + Meteor.user().profile.address);
-            if (result) {
-                return result.data;
+            let balances = {
+                "myBalance": null,
+                "allBalances": null
+            };
+            let result = null;
+            if (_.indexOf(Meteor.user().roles, "approver") >= 0) {
+                // Approver
+                result = HTTP.get(Meteor.settings.public.apiURL + '/balances');
+                if (result) {
+                    const data = result.data;
+                    balances.myBalance = data.find((balance) => {
+                        return balance.wallet === Meteor.user().profile.address;
+                    });
+                    if (balances.myBalance === undefined || !balances.myBalance) {
+                        balances.myBalance = {
+                            "wallet": Meteor.user().profile.address,
+                            "deposit": 0,
+                            "lend": 0
+                        };
+                    }
+                    balances.allBalances = data.filter((balance) => {
+                        return balance.wallet !== Meteor.user().profile.address;
+                    });
+                    return balances;
+                } else {
+                    return null;
+                }
             } else {
-                return null;
+                // Other user
+                result = HTTP.get(Meteor.settings.public.apiURL + '/balance/' + Meteor.user().profile.address);
+                if (result) {
+                    balances.myBalance = result.data;
+                    if (!balances.myBalance) {
+                        balances.myBalance = {
+                            "wallet": Meteor.user().profile.address,
+                            "deposit": 0,
+                            "lend": 0
+                        }
+                    }
+                    return balances;
+                } else {
+                    return null;
+                }
             }
         } catch (e) {
             throw new Meteor.Error(e.message);
@@ -218,6 +273,7 @@ Meteor.methods({
             throw new Meteor.Error(e.message);
         }
     },
+
     'userUpdateProfile.account'(updateData) {
         if (!Meteor.userId) {
             throw new Meteor.Error('not-authorized');

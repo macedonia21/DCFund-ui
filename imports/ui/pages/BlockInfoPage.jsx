@@ -71,7 +71,9 @@ class BlockInfoPage extends Component {
                     return (
                         <div key={txDCF.timestamp}>
                             <div>
-                                <span className="lead"><b>{txDCF.amount} DCF</b>&nbsp;</span>
+                                <span className="lead"><b>{txDCF.amount} DCF</b></span>
+                            </div>
+                            <div>
                                 <small>from&nbsp;
                                     <Link to={`/address/${txDCF.wallet}`}>
                                         {txDCF.wallet}
@@ -112,12 +114,14 @@ class BlockInfoPage extends Component {
                                 <div className="btn-group-vertical btn-group-sm" role="group"
                                      aria-label="Transaction pending">
                                     {transaction.isApproved ?
-                                        <div className="text-success"><span className="glyphicon glyphicon-ok"
-                                                                            aria-hidden="true">
-                                        </span> Approved</div> :
-                                        <div className="text-danger"><span className="glyphicon glyphicon-remove"
-                                                                           aria-hidden="true">
-                                        </span> Rejected</div>}
+                                        <span className="label label-success">
+                                            <span className="glyphicon glyphicon-ok" aria-hidden="true">
+                                            </span> Approved
+                                        </span> :
+                                        <span className="label label-danger">
+                                            <span className="glyphicon glyphicon-remove" aria-hidden="true">
+                                            </span> Rejected
+                                        </span>}
                                 </div>
                             </div>
                         </div>
@@ -168,7 +172,8 @@ class BlockInfoPage extends Component {
                                                 </div>
                                                 <div className="row">
                                                     <div className="hidden-xs col-sm-1">Time</div>
-                                                    <div className="col-xs-12 col-sm-11">{this.formatDate(block.timestamp)}</div>
+                                                    <div
+                                                        className="col-xs-12 col-sm-11">{this.formatDate(block.timestamp)}</div>
                                                 </div>
                                                 <div className="row">
                                                     <div className="hidden-xs col-sm-1">Diff</div>

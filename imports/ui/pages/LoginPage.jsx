@@ -15,6 +15,9 @@ export default class LoginPage extends Component {
         let password = document.getElementById('login-password').value;
         Meteor.loginWithPassword(email, password, (err) => {
             if (err) {
+                document.getElementById('login-email').value = '';
+                document.getElementById('login-password').value = '';
+
                 NotificationManager.error('Account or password not valid', 'Error', 3000);
             } else {
                 this.props.history.push('/');

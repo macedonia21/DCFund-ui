@@ -57,7 +57,7 @@ mongo@1.4.7
 mongo-dev-server@1.1.0
 mongo-id@1.0.7
 msavin:mongol@4.0.1
-nemo64:bootstrap@3.3.5_3
+nemo64:bootstrap@3.3.5_2
 nemo64:bootstrap-data@3.3.5
 npm-bcrypt@0.9.3
 npm-mongo@2.2.34

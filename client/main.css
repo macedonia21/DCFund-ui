@@ -53,11 +53,15 @@ main {
     width: 100%;
     height: 60px;
     line-height: 60px;
-    background-color: #f5f5f5;
+    background-color: transparent;
 }
 
 .loader {
     display: inline-block;
+}
+
+.trans-filter-group {
+    margin-bottom: 20px;
 }
 
 input[readonly] {
@@ -69,6 +73,55 @@ input[readonly] {
 
 input[readonly]:hover, input[readonly]:focus {
     box-shadow: none;
+}
+/* enable absolute positioning */
+.inner-addon, .inner-addon-lg {
+    position: relative;
+}
+
+/* style icon */
+.inner-addon-lg .glyphicon {
+    position: absolute;
+    padding: 15px;
+    pointer-events: none;
+}
+.inner-addon .glyphicon {
+    position: absolute;
+    padding: 10px;
+    pointer-events: none;
+}
+
+.inner-addon .glyphicon.pad-right {
+    position: absolute;
+    padding: 10px 30px 10px 10px;
+    pointer-events: none;
+}
+.inner-addon .glyphicon.pad-left {
+    position: absolute;
+    padding: 10px 30px 10px 20px;
+    pointer-events: none;
+}
+
+/* align icon */
+.left-addon .glyphicon  { left:  0px;}
+.right-addon .glyphicon { right: 0px;}
+
+/* add padding  */
+.left-addon input  { padding-left:  30px; }
+.right-addon input { padding-right: 30px; }
+
+/* Transaction Type List Item */
+.item-trans-deposit {
+    border-left: 8px solid #86bc25;
+}
+.item-trans-withdraw {
+    border-left: 8px solid #5bc0de;
+}
+.item-trans-borrow {
+    border-left: 8px solid #d9534f;
+}
+.item-trans-pay {
+    border-left: 8px solid #f0ad4e;
 }
 
 /* Notification */

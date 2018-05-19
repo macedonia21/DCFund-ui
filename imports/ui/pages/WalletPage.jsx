@@ -11,16 +11,25 @@ class WalletPage extends Component {
         super(props);
 
         this.state = {
+            // Loading flags
             loadingBalance: true,
             loadingPendTrans: true,
             loadingApprTrans: true,
+
+            // Data
             balance: {},
+            allBalances: [],
             pendTransPool: [],
             apprTransPool: [],
+            apprFiltedTransPool: [],
             didMount: false,
 
+            // Request send flags
             requestSending: false,
-            requestRemoving: false
+            requestRemoving: false,
+
+            // Filter flags
+            apprTransTypeFilter: -1
         };
     }
 
@@ -46,9 +55,24 @@ class WalletPage extends Component {
                 this.setState({apprTransPool: null});
             } else {
                 this.setState({apprTransPool: res});
+                this.filterApprTransPool(this.state.apprTransTypeFilter);
             }
             this.setState({loadingApprTrans: false});
         });
+    }
+
+    filterApprTransPool(filterType) {
+        if (filterType > -1) {
+            const filteredPool = this.state.apprTransPool.slice(0).filter((trans) => {
+                return trans.txDCFs[0].type === filterType;
+            });
+            this.setState({
+                apprFiltedTransPool: filteredPool
+            });
+        } else {
+            this.setState({apprFiltedTransPool: this.state.apprTransPool.slice(0)});
+        }
+        this.setState({apprTransTypeFilter: filterType});
     }
 
     fetchTransPoolData() {
@@ -67,7 +91,12 @@ class WalletPage extends Component {
             if (err) {
                 this.setState({balance: null});
             } else {
-                this.setState({balance: res});
+                if (res.myBalance) {
+                    this.setState({balance: res.myBalance});
+                }
+                if (res.allBalances) {
+                    this.setState({allBalances: res.allBalances});
+                }
             }
             this.setState({loadingBalance: false});
         });
@@ -147,6 +176,7 @@ class WalletPage extends Component {
             if (err) {
                 NotificationManager.error(err.message, 'Error', 3000);
             } else {
+                NotificationManager.success('Your request removed', 'Success', 3000);
                 this.setState({loadingPendTrans: true});
             }
         });
@@ -165,10 +195,13 @@ class WalletPage extends Component {
 
         Meteor.call('confirmRequest.post', requestData, (err, res) => {
             if (err) {
-                console.log(err.message);
-            } else {
+                NotificationManager.error('Request removed or block cannot created', 'Error', 3000);
                 this.setState({loadingApprTrans: true});
-                this.setState({loadingBalance: true});
+            } else {
+                this.setState({
+                    loadingApprTrans: true,
+                    loadingBalance: true
+                });
             }
         });
     }
@@ -210,6 +243,7 @@ class WalletPage extends Component {
         let currentYear = new Date().getFullYear();
 
         let pendTransPool = this.state.pendTransPool;
+        let countPendTrans = pendTransPool.length;
         let pendTransRender = [1].map(() => {
             return (
                 <li key='1' className="list-group-item">
@@ -224,7 +258,9 @@ class WalletPage extends Component {
                     return (
                         <div key={txDCF.timestamp}>
                             <div>
-                                <span className="lead"><b>{txDCF.amount} DCF</b>&nbsp;</span>
+                                <span className="lead"><b>{txDCF.amount} DCF</b></span>
+                            </div>
+                            <div>
                                 <small>from&nbsp;
                                     <Link to={`/address/${txDCF.wallet}`}>
                                         {txDCF.wallet}
@@ -244,7 +280,11 @@ class WalletPage extends Component {
                 });
 
                 return (
-                    <li key={transaction.id} className="list-group-item">
+                    <li key={transaction.id} className={'list-group-item ' +
+                    (transaction.txDCFs[0].type === 0 ? 'item-trans-deposit' :
+                        (transaction.txDCFs[0].type === 1 ? 'item-trans-withdraw' :
+                            (transaction.txDCFs[0].type === 2 ? 'item-trans-borrow' :
+                                'item-trans-pay')))}>
                         <div className="row">
                             <div className="col-xs-9">
                                 {txDCFs}
@@ -266,7 +306,26 @@ class WalletPage extends Component {
             });
         }
 
-        let apprTransPool = this.state.apprTransPool;
+        let apprTransPool = this.state.apprFiltedTransPool;
+        let countApprTrans = apprTransPool.length;
+        let filterType = 'All';
+        switch (this.state.apprTransTypeFilter) {
+            case -1:
+                filterType = 'All';
+                break;
+            case 0:
+                filterType = 'Deposit';
+                break;
+            case 1:
+                filterType = 'Withdraw';
+                break;
+            case 2:
+                filterType = 'Borrow';
+                break;
+            case 3:
+                filterType = 'Pay';
+                break;
+        }
         let apprTransRender = [1].map(() => {
             return (
                 <li key='1' className="list-group-item">
@@ -278,10 +337,28 @@ class WalletPage extends Component {
         if (apprTransPool && apprTransPool.length > 0) {
             apprTransRender = apprTransPool.map((transaction) => {
                 let txDCFs = transaction.txDCFs.map((txDCF) => {
+                    let borrowingAmt = null;
+                    const allBalances = this.state.allBalances;
+                    console.log(allBalances);
+                    if (allBalances) {
+                        const walletBalance = allBalances.find((balance) => {
+                            return balance.wallet === txDCF.wallet;
+                        });
+                        if (walletBalance) {
+                            borrowingAmt = walletBalance.lend;
+                        } else {
+                            borrowingAmt = 0;
+                        }
+                    }
                     return (
                         <div key={txDCF.timestamp}>
                             <div>
-                                <span className="lead"><b>{txDCF.amount} DCF</b>&nbsp;</span>
+                                <span className="lead"><b>{txDCF.amount} DCF</b>{
+                                    txDCF.type === 2 && borrowingAmt !== null ?
+                                        ' (borrowing ' + borrowingAmt + ' DCF)' : ''
+                                }</span>
+                            </div>
+                            <div>
                                 <small>from&nbsp;
                                     <Link to={`/address/${txDCF.wallet}`}>
                                         {txDCF.wallet}
@@ -301,7 +378,11 @@ class WalletPage extends Component {
                 });
 
                 return (
-                    <li key={transaction.id} className="list-group-item">
+                    <li key={transaction.id} className={'list-group-item ' +
+                    (transaction.txDCFs[0].type === 0 ? 'item-trans-deposit' :
+                        (transaction.txDCFs[0].type === 1 ? 'item-trans-withdraw' :
+                            (transaction.txDCFs[0].type === 2 ? 'item-trans-borrow' :
+                                'item-trans-pay')))}>
                         <div className="row">
                             <div className="col-xs-9">
                                 {txDCFs}
@@ -373,7 +454,7 @@ class WalletPage extends Component {
                                     <div className='container-fluid'>
                                         <form>
                                             <div className="row">
-                                                <div className="col-xs-12 col-sm-6 col-md-3">
+                                                <div className="col-xs-6 col-sm-6 col-md-3">
                                                     <div className="form-group">
                                                         <label htmlFor="typeInput">Request type</label>
                                                         <select className="form-control input-lg" id="typeInput"
@@ -384,7 +465,7 @@ class WalletPage extends Component {
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div className="col-xs-12 col-sm-6 col-md-3">
+                                                <div className="col-xs-6 col-sm-6 col-md-3">
                                                     <div className="form-group">
                                                         <label htmlFor="amountInput">Amount (DCF)</label>
                                                         <input type="number" className="form-control input-lg"
@@ -393,7 +474,7 @@ class WalletPage extends Component {
                                                                defaultValue="1"/>
                                                     </div>
                                                 </div>
-                                                <div className="col-xs-12 col-sm-6 col-md-3">
+                                                <div className="col-xs-6 col-sm-6 col-md-3">
                                                     <div className="form-group">
                                                         <label htmlFor="monthInput">Month</label>
                                                         <select className="form-control input-lg" id="monthInput"
@@ -413,7 +494,7 @@ class WalletPage extends Component {
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div className="col-xs-12 col-sm-6 col-md-3">
+                                                <div className="col-xs-6 col-sm-6 col-md-3">
                                                     <div className="form-group">
                                                         <label htmlFor="yearInput">Year</label>
                                                         <select className="form-control input-lg" id="yearInput"
@@ -468,7 +549,12 @@ class WalletPage extends Component {
 
                             {isAdmin || isApprover ?
                                 <div>
-                                    <h3>Approve requests</h3>
+                                    <h3>
+                                        {countApprTrans <= 0 ? 'Approve requests' :
+                                            (countApprTrans === 1 ? 'Approve 1 request' :
+                                                'Approve ' + countApprTrans + ' requests')
+                                        }
+                                    </h3>
                                     <div className='container-fluid'>
                                         <div className="loader-container">
                                             <DotLoader
@@ -479,6 +565,27 @@ class WalletPage extends Component {
 
                                         {this.state.loadingApprTrans ? '' :
                                             <div>
+                                                <div className="btn-group trans-filter-group">
+                                                    <button type="button" className="btn btn-default dropdown-toggle"
+                                                            data-toggle="dropdown" aria-haspopup="true"
+                                                            aria-expanded="false">
+                                                        Filter by Type: {filterType} <span className="caret"></span>
+                                                    </button>
+                                                    <ul className="dropdown-menu">
+                                                        <li><a href="#" onClick={() => {
+                                                            this.filterApprTransPool(-1);
+                                                        }}>All</a></li>
+                                                        <li><a href="#" onClick={() => {
+                                                            this.filterApprTransPool(0);
+                                                        }}>Deposit</a></li>
+                                                        <li><a href="#" onClick={() => {
+                                                            this.filterApprTransPool(2);
+                                                        }}>Borrow</a></li>
+                                                        <li><a href="#" onClick={() => {
+                                                            this.filterApprTransPool(3);
+                                                        }}>Pay</a></li>
+                                                    </ul>
+                                                </div>
                                                 <ul className="list-group">
                                                     {apprTransRender}
                                                 </ul>

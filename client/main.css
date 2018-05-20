@@ -64,6 +64,10 @@ main {
     margin-bottom: 20px;
 }
 
+.td-amount-zero {
+    background-color: #f9f9f9;
+}
+
 input[readonly] {
     background-color: transparent !important;
     padding-left: 0;

@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {withHistory, Switch, Route, BrowserRouter as Router} from 'react-router-dom';
 
 import WalletPage from '../pages/WalletPage';
+import ReportPage from '../pages/ReportPage';
 import ProfilePage from '../pages/ProfilePage';
 import BlockPage from '../pages/BlockPage';
 import BlockInfoPage from '../pages/BlockInfoPage';
@@ -23,6 +24,7 @@ export default class MainContainer extends Component {
             <Switch>
                 <Route exact path="/" component={WalletPage}/>
                 <Route path="/profile" component={ProfilePage}/>
+                <Route path="/report" component={ReportPage}/>
                 <Route exact path="/block" component={BlockPage}/>
                 <Route path="/block/:blockHash" component={BlockInfoPage}/>
                 <Route path="/address/:address" component={AddressPage}/>

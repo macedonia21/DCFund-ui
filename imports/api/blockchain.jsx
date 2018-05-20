@@ -2,6 +2,7 @@ import {Meteor} from 'meteor/meteor';
 import {Accounts} from 'meteor/accounts-base';
 import {HTTP} from 'meteor/http';
 import {check} from 'meteor/check';
+import * as _ from 'lodash';
 
 if (Meteor.isServer) {
     // This code only runs on the server
@@ -290,6 +291,102 @@ Meteor.methods({
                     "profile.fullName": updateData.data.firstName + " " + updateData.data.lastName
                 }
             });
+        } catch (e) {
+            throw new Meteor.Error(e.message);
+        }
+    },
+
+    'report.get'() {
+        if (!Meteor.userId) {
+            throw new Meteor.Error('not-authorized');
+        }
+
+        try {
+            const result = HTTP.get(Meteor.settings.public.apiURL + '/blocks');
+            if (result) {
+                if (result.data) {
+                    let reportData = {
+                        borrowReportData: null,
+                        depositReportData: null
+                    };
+                    const blockData = _.filter(result.data.slice(1), (block) => {
+                        return block.data[0].isApproved === true
+                    });
+
+                    // Wallet Balances
+                    const walletBalances = _.last(blockData).balances;
+
+                    // Wallet Owner
+                    const ownerStep1 = _.map(blockData.slice(1), (block) => {
+                        return block.data[0].txDCFs[0]
+                    });
+                    const ownerStep2 = _.groupBy(ownerStep1, 'wallet');
+                    const walletOwner = _.mapValues(ownerStep2, (txDCFs) => {
+                        return _.last(txDCFs).walletOwner;
+                    });
+
+                    // Borrow Report Data
+                    const borrowStep1 = _.map(blockData, (block) => {
+                        return block.data[0].txDCFs[0]
+                    });
+                    const borrowStep2 = _.filter(borrowStep1, (txDCF) => {
+                        return txDCF.type === 2 || txDCF.type === 3
+                    });
+                    if (borrowStep2) {
+                        const borrowStep3 = _.groupBy(borrowStep2, 'wallet');
+                        const borrowStep4 = _.mapValues(borrowStep3, (wallet) => {
+                            return _.reduce(wallet, (sum, txDCF) => {
+                                return txDCF.type === 2 ? sum + txDCF.amount : sum - txDCF.amount;
+                            }, 0);
+                        });
+                        reportData.borrowReportData = {
+                            key: _.map(_.keys(borrowStep4), (wallet) => {
+                                return walletOwner[wallet];
+                            }),
+                            value: _.values(borrowStep4)
+                        };
+                    }
+
+                    // Deposit Report Data
+                    const depositStep1 = _.map(blockData, (block) => {
+                        return block.data[0].txDCFs[0]
+                    });
+                    const depositStep2 = _.filter(depositStep1, (txDCF) => {
+                        return txDCF.type === 0
+                    });
+                    if (depositStep2) {
+                        const depositStep3 = _.groupBy(depositStep2, 'wallet');
+                        const depositStep4 = _.mapValues(depositStep3, (txDCFs) => {
+                            return _.groupBy(txDCFs, (txDCF) => {
+                                return txDCF.month + '.' + txDCF.year;
+                            });
+                        });
+                        const depositStep5 = _.mapValues(depositStep4, (wallet) => {
+                            return _.mapValues(wallet, (month) => {
+                                return _.reduce(month, (sum, txDCF) => {
+                                    return sum + txDCF.amount;
+                                }, 0);
+                            });
+                        });
+                        const depositStep6 = _.forEach(depositStep5, function(value, key) {
+                            return value.walletOwner = walletOwner[key];
+                        });
+
+                        reportData.depositReportData = _.forEach(depositStep5, function(value, key) {
+                            const walletBalance = _.find(walletBalances, (balance) => {
+                                return balance.wallet === key;
+                            });
+                            return value.walletDepositTotal = walletBalance.deposit;
+                        });
+                    }
+
+                    return reportData;
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
         } catch (e) {
             throw new Meteor.Error(e.message);
         }

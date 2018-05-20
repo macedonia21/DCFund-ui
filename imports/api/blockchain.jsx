@@ -307,6 +307,7 @@ Meteor.methods({
                 if (result.data) {
                     let reportData = {
                         borrowReportData: null,
+                        borrowChartData: null,
                         depositReportData: null
                     };
                     const blockData = _.filter(result.data.slice(1), (block) => {
@@ -325,7 +326,7 @@ Meteor.methods({
                         return _.last(txDCFs).walletOwner;
                     });
 
-                    // Borrow Report Data
+                    // Borrow Data
                     const borrowStep1 = _.map(blockData, (block) => {
                         return block.data[0].txDCFs[0]
                     });
@@ -335,15 +336,31 @@ Meteor.methods({
                     if (borrowStep2) {
                         const borrowStep3 = _.groupBy(borrowStep2, 'wallet');
                         const borrowStep4 = _.mapValues(borrowStep3, (wallet) => {
-                            return _.reduce(wallet, (sum, txDCF) => {
-                                return txDCF.type === 2 ? sum + txDCF.amount : sum - txDCF.amount;
-                            }, 0);
+                            const lastBorrowDate = new Date(_.last(wallet).timestamp);
+                            const dueDate = new Date(lastBorrowDate.getFullYear(), lastBorrowDate.getMonth() + 1, 0);
+
+                            return {
+                                borrowTimestamp: lastBorrowDate.getTime(),
+                                dueTimestamp: dueDate.getTime(),
+                                borrowAmount: _.reduce(wallet, (sum, txDCF) => {
+                                    return txDCF.type === 2 ? sum + txDCF.amount : sum - txDCF.amount;
+                                }, 0)
+                            };
                         });
-                        reportData.borrowReportData = {
+
+                        // Borrow Report Data
+                        reportData.borrowReportData = _.mapKeys(borrowStep4, (value, key) => {
+                            return walletOwner[key];
+                        });
+
+                        // Borrow Chart Data
+                        reportData.borrowChartData = {
                             key: _.map(_.keys(borrowStep4), (wallet) => {
                                 return walletOwner[wallet];
                             }),
-                            value: _.values(borrowStep4)
+                            value: _.map(_.values(borrowStep4), (wallet) => {
+                                return wallet.borrowAmount;
+                            })
                         };
                     }
 
@@ -352,7 +369,7 @@ Meteor.methods({
                         return block.data[0].txDCFs[0]
                     });
                     const depositStep2 = _.filter(depositStep1, (txDCF) => {
-                        return txDCF.type === 0
+                        return txDCF.type === 0 || txDCF.type === 1
                     });
                     if (depositStep2) {
                         const depositStep3 = _.groupBy(depositStep2, 'wallet');
@@ -364,15 +381,15 @@ Meteor.methods({
                         const depositStep5 = _.mapValues(depositStep4, (wallet) => {
                             return _.mapValues(wallet, (month) => {
                                 return _.reduce(month, (sum, txDCF) => {
-                                    return sum + txDCF.amount;
+                                    return (txDCF.type === 0 ? sum + txDCF.amount : sum - txDCF.amount);
                                 }, 0);
                             });
                         });
-                        const depositStep6 = _.forEach(depositStep5, function(value, key) {
+                        const depositStep6 = _.forEach(depositStep5, function (value, key) {
                             return value.walletOwner = walletOwner[key];
                         });
 
-                        reportData.depositReportData = _.forEach(depositStep5, function(value, key) {
+                        reportData.depositReportData = _.forEach(depositStep6, function (value, key) {
                             const walletBalance = _.find(walletBalances, (balance) => {
                                 return balance.wallet === key;
                             });

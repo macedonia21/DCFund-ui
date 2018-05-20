@@ -82,8 +82,8 @@ class BlockInfoPage extends Component {
                             </div>
                             <div>
                                 <span>{txDCF.walletOwner}</span> {txDCF.type === 0 ?
-                                'deposit' :
-                                txDCF.type === 2 ? 'borrow' : 'pay'}s at {this.formatDate(txDCF.timestamp)}
+                                'deposit' : (txDCF.type === 1 ? 'withdraw' :
+                                txDCF.type === 2 ? 'borrow' : 'pay')}s at {this.formatDate(txDCF.timestamp)}
                             </div>
                             <div>
                                 <small>for period {txDCF.month}.{txDCF.year}</small>
@@ -159,29 +159,29 @@ class BlockInfoPage extends Component {
                                         <ul className="list-group">
                                             <li key='1' className="list-group-item">
                                                 <div className="row">
-                                                    <div className="hidden-xs col-sm-1">Index</div>
-                                                    <div className="col-xs-12 col-sm-11">{block.index}</div>
+                                                    <div className="hidden-xs col-sm-2">Index</div>
+                                                    <div className="col-xs-12 col-sm-10">{block.index}</div>
                                                 </div>
                                                 <div className="row">
-                                                    <div className="hidden-xs col-sm-1">Pre.Hash</div>
-                                                    <div className="col-xs-12 col-sm-11">
+                                                    <div className="hidden-xs col-sm-2">Pre.Hash</div>
+                                                    <div className="col-xs-12 col-sm-10">
                                                         <Link to={`/block/${block.previousHash}`}>
                                                             {block.previousHash}
                                                         </Link>
                                                     </div>
                                                 </div>
                                                 <div className="row">
-                                                    <div className="hidden-xs col-sm-1">Time</div>
+                                                    <div className="hidden-xs col-sm-2">Time</div>
                                                     <div
-                                                        className="col-xs-12 col-sm-11">{this.formatDate(block.timestamp)}</div>
+                                                        className="col-xs-12 col-sm-10">{this.formatDate(block.timestamp)}</div>
                                                 </div>
                                                 <div className="row">
-                                                    <div className="hidden-xs col-sm-1">Diff</div>
-                                                    <div className="col-xs-12 col-sm-11">{block.difficulty}</div>
+                                                    <div className="hidden-xs col-sm-2">Diff</div>
+                                                    <div className="col-xs-12 col-sm-10">{block.difficulty}</div>
                                                 </div>
                                                 <div className="row">
-                                                    <div className="hidden-xs col-sm-1">Nonce</div>
-                                                    <div className="col-xs-12 col-sm-11">{block.nonce}</div>
+                                                    <div className="hidden-xs col-sm-2">Nonce</div>
+                                                    <div className="col-xs-12 col-sm-10">{block.nonce}</div>
                                                 </div>
                                                 <h3>Transaction</h3>
                                                 <div className='container-fluid'>

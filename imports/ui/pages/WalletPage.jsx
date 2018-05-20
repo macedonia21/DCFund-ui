@@ -269,8 +269,8 @@ class WalletPage extends Component {
                             </div>
                             <div>
                                 <span>{txDCF.walletOwner}</span> {txDCF.type === 0 ?
-                                'deposit' :
-                                txDCF.type === 2 ? 'borrow' : 'pay'}s {this.timeAgo(txDCF.timestamp)}
+                                'deposit' : (txDCF.type === 1 ? 'withdraw' :
+                                    txDCF.type === 2 ? 'borrow' : 'pay')}s {this.timeAgo(txDCF.timestamp)}
                             </div>
                             <div>
                                 <small>for period {txDCF.month}.{txDCF.year}</small>
@@ -339,7 +339,6 @@ class WalletPage extends Component {
                 let txDCFs = transaction.txDCFs.map((txDCF) => {
                     let borrowingAmt = null;
                     const allBalances = this.state.allBalances;
-                    console.log(allBalances);
                     if (allBalances) {
                         const walletBalance = allBalances.find((balance) => {
                             return balance.wallet === txDCF.wallet;
@@ -367,8 +366,8 @@ class WalletPage extends Component {
                             </div>
                             <div>
                                 <span>{txDCF.walletOwner}</span> {txDCF.type === 0 ?
-                                'deposit' :
-                                txDCF.type === 2 ? 'borrow' : 'pay'}s {this.timeAgo(txDCF.timestamp)}
+                                'deposit' : (txDCF.type === 1 ? 'withdraw' :
+                                    txDCF.type === 2 ? 'borrow' : 'pay')}s {this.timeAgo(txDCF.timestamp)}
                             </div>
                             <div>
                                 <small>for period {txDCF.month}.{txDCF.year}</small>
@@ -420,11 +419,12 @@ class WalletPage extends Component {
                     <div className="row">
                         <div className="col-sm-12 col-md-4">
                             {this.state.loadingBalance ?
-                                <h3><DotLoader
-                                    size={26}
-                                    color={'#86bc25'}
-                                    loading={this.state.loadingBalance}
-                                /></h3>
+                                <div className="loader-container">
+                                    <h3><DotLoader
+                                        size={26}
+                                        color={'#86bc25'}
+                                        loading={this.state.loadingBalance}
+                                    /></h3></div>
                                 :
                                 <div>
                                     {balance ?
@@ -460,6 +460,7 @@ class WalletPage extends Component {
                                                         <select className="form-control input-lg" id="typeInput"
                                                                 defaultValue='Deposit'>
                                                             <option value="0">Deposit</option>
+                                                            <option value="1">Withdraw</option>
                                                             <option value="2">Borrow</option>
                                                             <option value="3">Pay</option>
                                                         </select>

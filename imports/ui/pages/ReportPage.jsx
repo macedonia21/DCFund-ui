@@ -14,10 +14,10 @@ class ReportPage extends Component {
         this.state = {
             didMount: false,
             // Loading flags
-            loadingBorrowReport: true,
-            loadingDepositReport: true,
+            loadingReport: true,
 
             borrowReportData: null,
+            borrowChartData: null,
             depositReportData: null
         };
     }
@@ -27,7 +27,7 @@ class ReportPage extends Component {
     }
 
     componentDidUpdate() {
-        if (this.state.loadingBorrowReport) {
+        if (this.state.loadingReport) {
             this.fetchBorrowReport();
         }
     }
@@ -37,6 +37,7 @@ class ReportPage extends Component {
             if (err) {
                 this.setState({
                     borrowReportData: null,
+                    borrowChartData: null,
                     depositReportData: null
                 });
             } else {
@@ -44,15 +45,32 @@ class ReportPage extends Component {
                     this.setState({borrowReportData: res.borrowReportData});
                 }
 
+                if (res.borrowChartData) {
+                    this.setState({borrowChartData: res.borrowChartData});
+                }
+
                 if (res.depositReportData) {
                     this.setState({depositReportData: res.depositReportData});
                 }
             }
             this.setState({
-                loadingBorrowReport: false,
-                loadingDepositReport: false
+                loadingReport: false
             });
         });
+    }
+
+    formatDate(timestamp) {
+        const date = new Date(timestamp);
+        let day = date.getDate();
+        if (day < 10) {
+            day = '0' + day;
+        }
+        let month = date.getMonth() + 1;
+        if (month < 10) {
+            month = '0' + month;
+        }
+        const year = date.getFullYear();
+        return day + '.' + month + '.' + year;
     }
 
     render() {
@@ -63,7 +81,7 @@ class ReportPage extends Component {
         const isApprover = Roles.userIsInRole(currentUser, 'approver');
         const isUser = Roles.userIsInRole(currentUser, 'user');
 
-        // Borrow Render
+        // Borrow Report Render
         const borrowReportData = this.state.borrowReportData;
         let borrowReportRender = [1].map(() => {
             return (
@@ -73,8 +91,51 @@ class ReportPage extends Component {
             )
         });
         if (borrowReportData) {
+            const borrowReportRowRender = _.map(_.keys(borrowReportData), (wallet) => {
+                const walletBorrowData = borrowReportData[wallet];
+
+                return (
+                    <tr key={wallet}>
+                        <th>{wallet}</th>
+                        <td>{walletBorrowData.borrowAmount}</td>
+                        <td>{this.formatDate(walletBorrowData.borrowTimestamp)}</td>
+                        <td className="danger">{this.formatDate(walletBorrowData.dueTimestamp)}</td>
+                    </tr>
+                );
+            });
+
+            borrowReportRender = [1].map(() => {
+                return (
+                    <table key="1" className="table table-bordered table-responsive table-hover table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Full Name</th>
+                            <th>Amount</th>
+                            <th>Borrowed Date</th>
+                            <th className="danger">To-be Refund Date</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {borrowReportRowRender}
+                        </tbody>
+                    </table>
+                )
+            });
+        }
+
+
+        // Borrow Chart Render
+        const borrowChartData = this.state.borrowChartData;
+        let borrowChartRender = [1].map(() => {
+            return (
+                <li key='1' className="list-group-item">
+                    No data found or error reading data
+                </li>
+            )
+        });
+        if (borrowChartData) {
             const dataBorrow = {
-                labels: borrowReportData.key,
+                labels: borrowChartData.key,
                 datasets: [
                     {
                         label: 'Borrowing (DCF)',
@@ -83,7 +144,7 @@ class ReportPage extends Component {
                         borderWidth: 1,
                         hoverBackgroundColor: 'rgba(217,83,79,0.4)',
                         hoverBorderColor: 'rgba(217,83,79,1)',
-                        data: borrowReportData.value
+                        data: borrowChartData.value
                     }
                 ]
             };
@@ -100,7 +161,7 @@ class ReportPage extends Component {
                 }
             };
 
-            borrowReportRender = [1].map(() => {
+            borrowChartRender = [1].map(() => {
                 return (
                     <HorizontalBar key="1"
                                    data={dataBorrow}
@@ -109,7 +170,7 @@ class ReportPage extends Component {
             });
         }
 
-        // Deposit Render
+        // Deposit Report Render
         const currentDate = new Date();
         const currentMonth = currentDate.getMonth() + 1;
         const currentYear = currentDate.getFullYear();
@@ -266,18 +327,31 @@ class ReportPage extends Component {
                     </header>
 
                     <div className="row">
+                        <div className="col-xs-12">
+                            <h3>Borrowing</h3>
+                            <h6><i>* 1 DCF = 1.000.000 VND</i></h6>
+                        </div>
+                    </div>
+                    <div className="row">
                         <div className="col-xs-12 col-sm-8 col-md-6">
-                            <div>
-                                <h3>Borrowing</h3>
-                                <h6><i>* 1 DCF = 1.000.000 VND</i></h6>
-                                {this.state.loadingBorrowReport ?
+                            {this.state.loadingReport ?
+                            <div className="loader-container">
+                                <DotLoader
+                                    size={60}
+                                    color={'#86bc25'}
+                                    loading={this.state.loadingReport}
+                                />
+                            </div> : borrowReportRender}
+                        </div>
+                        <div className="col-xs-12 col-sm-8 col-md-6">
+                            {this.state.loadingReport ?
+                                <div className="loader-container">
                                     <DotLoader
                                         size={60}
                                         color={'#86bc25'}
-                                        loading={this.state.loadingBorrowReport}
+                                        loading={this.state.loadingReport}
                                     />
-                                    : borrowReportRender}
-                            </div>
+                                </div> : borrowChartRender}
                         </div>
                     </div>
 
@@ -286,12 +360,14 @@ class ReportPage extends Component {
                             <div>
                                 <h3>Deposit</h3>
                                 <h6><i>* 1 DCF = 1.000.000 VND</i></h6>
-                                {this.state.loadingDepositReport ?
-                                    <DotLoader
-                                        size={60}
-                                        color={'#86bc25'}
-                                        loading={this.state.loadingDepositReport}
-                                    /> : depositReportRender}
+                                {this.state.loadingReport ?
+                                    <div className="loader-container">
+                                        <DotLoader
+                                            size={60}
+                                            color={'#86bc25'}
+                                            loading={this.state.loadingReport}
+                                        />
+                                    </div> : depositReportRender}
                             </div>
                         </div>
                     </div>

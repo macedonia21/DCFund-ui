@@ -81,8 +81,8 @@ class TransactionPage extends Component {
                         </div>
                         <div>
                             <span>{txDCF.walletOwner}</span> {txDCF.type === 0 ?
-                            'deposit' :
-                            txDCF.type === 2 ? 'borrow' : 'pay'}s at {this.formatDate(txDCF.timestamp)}
+                            'deposit' : (txDCF.type === 1 ? 'withdraw' :
+                            txDCF.type === 2 ? 'borrow' : 'pay')}s at {this.formatDate(txDCF.timestamp)}
                         </div>
                         <div>
                             <small>for period {txDCF.month}.{txDCF.year}</small>

@@ -460,7 +460,6 @@ class WalletPage extends Component {
                                                         <select className="form-control input-lg" id="typeInput"
                                                                 defaultValue='Deposit'>
                                                             <option value="0">Deposit</option>
-                                                            <option value="1">Withdraw</option>
                                                             <option value="2">Borrow</option>
                                                             <option value="3">Pay</option>
                                                         </select>

@@ -58,10 +58,13 @@ export default class AppContainer extends Component {
                             <div className="collapse navbar-collapse" id="myNavbar">
                                 <ul className="nav navbar-nav">
                                     <li>
-                                        <p className="navbar-text">Network: Testnet</p>
+                                        <p className="navbar-text">Testnet</p>
                                     </li>
                                 </ul>
                                 <ul className="nav navbar-nav navbar-right">
+                                    <li><a href="/report">
+                                        <span className="glyphicon glyphicon-file" aria-hidden="true"></span> Report
+                                    </a></li>
                                     <li><a href="/block">
                                         <span className="glyphicon glyphicon-link" aria-hidden="true"></span> Blockchain
                                     </a></li>

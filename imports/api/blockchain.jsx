@@ -189,6 +189,11 @@ Meteor.methods({
 
         check(isApprovalPool, Boolean);
 
+        if ((!isApprovalPool && Roles.userIsInRole(Meteor.user(), 'approver')) ||
+            (isApprovalPool && !Roles.userIsInRole(Meteor.user(), 'approver'))) {
+            return null;
+        }
+
         try {
             let getLink = '';
             if (isApprovalPool) {

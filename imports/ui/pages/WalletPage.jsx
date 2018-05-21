@@ -62,15 +62,17 @@ class WalletPage extends Component {
     }
 
     filterApprTransPool(filterType) {
-        if (filterType > -1) {
-            const filteredPool = this.state.apprTransPool.slice(0).filter((trans) => {
-                return trans.txDCFs[0].type === filterType;
-            });
-            this.setState({
-                apprFiltedTransPool: filteredPool
-            });
-        } else {
-            this.setState({apprFiltedTransPool: this.state.apprTransPool.slice(0)});
+        if (this.state.apprTransPool) {
+            if (filterType > -1) {
+                const filteredPool = this.state.apprTransPool.slice(0).filter((trans) => {
+                    return trans.txDCFs[0].type === filterType;
+                });
+                this.setState({
+                    apprFiltedTransPool: filteredPool
+                });
+            } else {
+                this.setState({apprFiltedTransPool: this.state.apprTransPool.slice(0)});
+            }
         }
         this.setState({apprTransTypeFilter: filterType});
     }
@@ -243,7 +245,6 @@ class WalletPage extends Component {
         let currentYear = new Date().getFullYear();
 
         let pendTransPool = this.state.pendTransPool;
-        let countPendTrans = pendTransPool.length;
         let pendTransRender = [1].map(() => {
             return (
                 <li key='1' className="list-group-item">

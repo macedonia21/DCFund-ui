@@ -200,6 +200,11 @@ class WalletPage extends Component {
                 NotificationManager.error('Request removed or block cannot created', 'Error', 3000);
                 this.setState({loadingApprTrans: true});
             } else {
+                if (isApproved) {
+                    NotificationManager.success('Request is approved', 'Success', 3000);
+                } else {
+                    NotificationManager.success('Request is rejected', 'Success', 3000);
+                }
                 this.setState({
                     loadingApprTrans: true,
                     loadingBalance: true

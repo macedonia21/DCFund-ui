@@ -128,9 +128,7 @@ class ReportPage extends Component {
         const borrowChartData = this.state.borrowChartData;
         let borrowChartRender = [1].map(() => {
             return (
-                <li key='1' className="list-group-item">
-                    No data found or error reading data
-                </li>
+                <div key="1"></div>
             )
         });
         if (borrowChartData) {

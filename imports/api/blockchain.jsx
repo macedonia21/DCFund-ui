@@ -323,7 +323,7 @@ Meteor.methods({
                     const walletBalances = _.last(blockData).balances;
 
                     // Wallet Owner
-                    const ownerStep1 = _.map(blockData.slice(1), (block) => {
+                    const ownerStep1 = _.map(blockData, (block) => {
                         return block.data[0].txDCFs[0]
                     });
                     const ownerStep2 = _.groupBy(ownerStep1, 'wallet');
@@ -354,25 +354,27 @@ Meteor.methods({
                         });
 
                         // Remove complete refund Wallet
-                        const borrowStep5 = _.pickBy(borrowStep4, function(value, key) {
+                        const borrowStep5 = _.pickBy(borrowStep4, function (value, key) {
                             return value.borrowAmount === 0;
                         });
                         const borrowStep6 = _.omit(borrowStep4, _.keys(borrowStep5));
 
-                        // Borrow Report Data
-                        reportData.borrowReportData = _.mapKeys(borrowStep6, (value, key) => {
-                            return walletOwner[key];
-                        });
+                        if (_.keys(borrowStep6).length > 0) {
+                            // Borrow Report Data
+                            reportData.borrowReportData = _.mapKeys(borrowStep6, (value, key) => {
+                                return walletOwner[key];
+                            });
 
-                        // Borrow Chart Data
-                        reportData.borrowChartData = {
-                            key: _.map(_.keys(borrowStep6), (wallet) => {
-                                return walletOwner[wallet];
-                            }),
-                            value: _.map(_.values(borrowStep6), (wallet) => {
-                                return wallet.borrowAmount;
-                            })
-                        };
+                            // Borrow Chart Data
+                            reportData.borrowChartData = {
+                                key: _.map(_.keys(borrowStep6), (wallet) => {
+                                    return walletOwner[wallet];
+                                }),
+                                value: _.map(_.values(borrowStep6), (wallet) => {
+                                    return wallet.borrowAmount;
+                                })
+                            };
+                        }
                     }
 
                     // Deposit Report Data

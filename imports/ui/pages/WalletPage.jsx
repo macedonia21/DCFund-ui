@@ -437,6 +437,10 @@ class WalletPage extends Component {
                                         <div>
                                             <h3>Deposit: {balance.deposit} DCF</h3>
                                             <h4>{!isApprover ? 'Borrow' : 'Lend'}: {balance.lend} DCF</h4>
+                                            {isApprover ?
+                                                <h4>
+                                                    Balance: {balance.deposit - balance.lend}
+                                                </h4> : ''}
                                         </div> :
                                         <div>
                                             <h3>Cannot retrieve balance</h3>

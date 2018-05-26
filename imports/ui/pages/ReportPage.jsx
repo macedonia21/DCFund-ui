@@ -91,8 +91,13 @@ class ReportPage extends Component {
             )
         });
         if (borrowReportData) {
+            let sumBorrowAmount = 0;
             const borrowReportRowRender = _.map(_.keys(borrowReportData), (wallet) => {
                 const walletBorrowData = borrowReportData[wallet];
+
+                if (walletBorrowData.borrowAmount > 0) {
+                    sumBorrowAmount = sumBorrowAmount + walletBorrowData.borrowAmount;
+                }
 
                 return (
                     <tr key={wallet}>
@@ -100,6 +105,20 @@ class ReportPage extends Component {
                         <td>{walletBorrowData.borrowAmount}</td>
                         <td>{this.formatDate(walletBorrowData.borrowTimestamp)}</td>
                         <td className="danger">{this.formatDate(walletBorrowData.dueTimestamp)}</td>
+                    </tr>
+                );
+            });
+
+            const borrowTotalRowRender = [1].map(() => {
+                if (sumBorrowAmount === 0) {
+                    sumBorrowAmount = undefined;
+                }
+                return (
+                    <tr key="1">
+                        <th>Total</th>
+                        <td className="warning">{sumBorrowAmount}</td>
+                        <td className="warning">{}</td>
+                        <td className="warning">{}</td>
                     </tr>
                 );
             });
@@ -117,12 +136,12 @@ class ReportPage extends Component {
                         </thead>
                         <tbody>
                         {borrowReportRowRender}
+                        {borrowTotalRowRender}
                         </tbody>
                     </table>
                 )
             });
         }
-
 
         // Borrow Chart Render
         const borrowChartData = this.state.borrowChartData;

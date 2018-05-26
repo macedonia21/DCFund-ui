@@ -9,3 +9,11 @@ UI for DCFund blockchain
 Commands for heroku cli
 * `heroku config:set ROOT_URL="https://<appname>.herokuapp.com"`
 * `heroku config:set METEOR_SETTINGS="$(cat settings.json)" --app <appname>`
+
+To-do lists
+* Balance for DCFund - **Done**
+* Balance for report
+* Check fund balance when user raise borrow request
+* Check borrowing amount when user raise pay request
+* Check fund balance when approve borrow request
+* Withdraw feature

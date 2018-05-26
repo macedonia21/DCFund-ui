@@ -230,6 +230,17 @@ Meteor.methods({
         try {
             const result = HTTP.post(Meteor.settings.public.apiURL + '/sendTransaction', requestData);
             if (result) {
+                try {
+                    Email.send({
+                        from: "noreply@dcfundapp.com",
+                        to: "anhtuan.hoangvu@gmail.com",
+                        subject: "[DCFund] Approve new request",
+                        text: "You have new request needs approval"
+                    });
+                } catch (e) {
+                    console.log(e);
+                }
+
                 return result;
             } else {
                 return null;
@@ -420,5 +431,14 @@ Meteor.methods({
         } catch (e) {
             throw new Meteor.Error(e.message);
         }
+    },
+
+    'email.send'(receiver, subject, text) {
+        Email.send({
+            from: "noreply@dcfundapp.com",
+            to: receiver,
+            subject: subject,
+            text: text
+        });
     }
 });

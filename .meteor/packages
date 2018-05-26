@@ -27,3 +27,4 @@ less
 nemo64:bootstrap@=3.3.5_2
 alanning:roles
 http
+email

@@ -20,6 +20,7 @@
     "qrcode-react": "^0.1.16",
     "react": "^15.6.1",
     "react-addons-pure-render-mixin": "^15.2.0",
+    "react-bootstrap-sweetalert": "^4.4.1",
     "react-chartjs-2": "^2.7.2",
     "react-dom": "^15.6.1",
     "react-hash-avatar": "0.0.2",

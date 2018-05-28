@@ -93,23 +93,6 @@ Meteor.methods({
         }
     },
 
-    'balance.get'() {
-        if (!Meteor.userId) {
-            throw new Meteor.Error('not-authorized');
-        }
-
-        try {
-            const result = HTTP.get(Meteor.settings.public.apiURL + '/balance/' + Meteor.user().profile.address);
-            if (result) {
-                return result.data;
-            } else {
-                return null;
-            }
-        } catch (e) {
-            throw new Meteor.Error(e.message);
-        }
-    },
-
     'allBalances.get'() {
         if (!Meteor.userId) {
             throw new Meteor.Error('not-authorized');
@@ -164,14 +147,20 @@ Meteor.methods({
                 // Other user
                 result = HTTP.get(Meteor.settings.public.apiURL + '/balance/' + Meteor.user().profile.address);
                 if (result) {
-                    balances.myBalance = result.data;
-                    if (!balances.myBalance) {
+                    const data = result.data;
+                    balances.myBalance = data.find((balance) => {
+                        return balance.wallet === Meteor.user().profile.address;
+                    });
+                    if (balances.myBalance === undefined || !balances.myBalance) {
                         balances.myBalance = {
                             "wallet": Meteor.user().profile.address,
                             "deposit": 0,
                             "lend": 0
                         }
                     }
+                    balances.allBalances = data.filter((balance) => {
+                        return balance.wallet !== Meteor.user().profile.address;
+                    });
                     return balances;
                 } else {
                     return null;
@@ -228,7 +217,51 @@ Meteor.methods({
         check(requestData.data.year, Number);
 
         try {
-            const result = HTTP.post(Meteor.settings.public.apiURL + '/sendTransaction', requestData);
+            // Get balance to check
+            let result = HTTP.get(Meteor.settings.public.apiURL + '/balance/' + Meteor.user().profile.address);
+            if (result) {
+                const data = result.data;
+                const myBalance = data.find((balance) => {
+                    return balance.wallet === Meteor.user().profile.address;
+                });
+
+                const fundBalances = data.filter((balance) => {
+                    return balance.wallet !== Meteor.user().profile.address;
+                });
+
+                if (requestData.data.type === 2) {
+                    // Borrow
+                    if ((20 - myBalance.lend) < (fundBalances[0].deposit - fundBalances[0].lend)) {
+                        if (requestData.data.amount > (20 - myBalance.lend)) {
+                            throw new Meteor.Error('borrow-more-quota',
+                                'Request more than borrow quota ' + (20 - myBalance.lend) + ' DCF');
+                        } else if (requestData.data.amount > (fundBalances[0].deposit - fundBalances[0].lend)) {
+                            throw new Meteor.Error('borrow-more-fund',
+                                'Request more than available fund ' +
+                                (fundBalances[0].deposit - fundBalances[0].lend) + ' DCF');
+                        }
+                    } else {
+                        if (requestData.data.amount > (fundBalances[0].deposit - fundBalances[0].lend)) {
+                            throw new Meteor.Error('borrow-more-fund',
+                                'Request more than available fund ' +
+                                (fundBalances[0].deposit - fundBalances[0].lend) + ' DCF');
+                        } else if (requestData.data.amount > (20 - myBalance.lend)) {
+                            throw new Meteor.Error('borrow-more-quota',
+                                'Request more than borrow quota ' + (20 - myBalance.lend) + ' DCF');
+                        }
+                    }
+                } else if (requestData.data.type === 3) {
+                    // Pay
+                    if (requestData.data.amount > myBalance.lend) {
+                        throw new Meteor.Error('pay-more-borrow',
+                            'Pay more than borrowing amount ' + myBalance.lend + ' DCF');
+                    }
+                }
+            } else {
+                throw new Meteor.Error('balance-error', 'Cannot retrieve fund balance');
+            }
+
+            result = HTTP.post(Meteor.settings.public.apiURL + '/sendTransaction', requestData);
             if (result) {
                 try {
                     Email.send({
@@ -238,7 +271,6 @@ Meteor.methods({
                         text: "You have new request needs approval"
                     });
                 } catch (e) {
-                    console.log(e);
                 }
 
                 return result;
@@ -246,7 +278,7 @@ Meteor.methods({
                 return null;
             }
         } catch (e) {
-            throw new Meteor.Error(e.message);
+            throw new Meteor.Error(e, e.reason, e.details);
         }
     },
 

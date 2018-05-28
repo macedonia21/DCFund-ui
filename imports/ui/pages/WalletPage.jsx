@@ -4,6 +4,7 @@ import {NotificationManager} from 'react-notifications';
 import {withTracker} from 'meteor/react-meteor-data';
 import {Link} from 'react-router-dom';
 import {DotLoader} from 'react-spinners';
+import SweetAlert from 'react-bootstrap-sweetalert';
 import QRCode from 'qrcode-react';
 
 class WalletPage extends Component {
@@ -29,7 +30,13 @@ class WalletPage extends Component {
             requestRemoving: false,
 
             // Filter flags
-            apprTransTypeFilter: -1
+            apprTransTypeFilter: -1,
+
+            // Request Type Notice
+            requestNotice: null,
+
+            // SweetAlert
+            alert: null
         };
     }
 
@@ -150,9 +157,33 @@ class WalletPage extends Component {
         };
 
         this.setState({requestSending: true});
+        // this.setState({
+        //     alert: (
+        //         <SweetAlert
+        //             title="Request"
+        //
+        //             input
+        //             inputType="number"
+        //             placeholder="Amount"
+        //             defaultValue="10"
+        //             validationMsg="You must enter your password!"
+        //
+        //             confirmBtnText="Submit"
+        //             confirmBtnBsStyle="success"
+        //             onConfirm={this.hideAlert.bind(this)}
+        //
+        //             showCancel
+        //             onCancel={this.hideAlert.bind(this)}>
+        //             You are borrowing 10 DCF.<br/>Don't pay more than 10 DCF.
+        //         </SweetAlert>
+        //     )
+        // });
         Meteor.call('newRequest.post', requestData, (err) => {
             if (err) {
-                NotificationManager.error(err.message, 'Error', 3000);
+                NotificationManager.error(err.reason, 'Error', 3000);
+                setTimeout(() => {
+                    this.setState({requestSending: false});
+                }, 1000);
             } else {
                 NotificationManager.success('New request submitted', 'Success', 3000);
                 this.setState({loadingPendTrans: true});
@@ -213,6 +244,58 @@ class WalletPage extends Component {
         });
     }
 
+    onChangeRequestType() {
+        const type = parseInt(document.getElementById('typeInput').value);
+        switch (type) {
+            case 0:
+                this.setState({requestNotice: null});
+                break;
+            case 2:
+                let availableFund = 0;
+                let borrowingAmt = 0;
+                let borrowQuota = 0;
+                let borrowNoticeContext = "Cannot borrow from fund.";
+                if (this.state.balance) {
+                    borrowingAmt = this.state.balance.lend;
+                    borrowQuota = 20 - borrowingAmt;
+                }
+                if (this.state.allBalances && this.state.allBalances[0]) {
+                    availableFund = this.state.allBalances[0].deposit - this.state.allBalances[0].lend;
+                    if (availableFund > borrowQuota) {
+                        console.log('1.' + availableFund + '-' + borrowQuota);
+                        borrowNoticeContext = "You can borrow up to " + borrowQuota + " DCF.";
+                    } else if (borrowQuota > availableFund  && availableFund > 0) {
+                        console.log('2.' + availableFund + '-' + borrowQuota);
+                        borrowNoticeContext = "You can borrow up to " + availableFund + " DCF.";
+                    }
+                }
+
+                this.setState({
+                    requestNotice:
+                        <div className="alert alert-info" role="alert">
+                            <strong>{availableFund} DCF</strong> is available for lending. {borrowNoticeContext}
+                        </div>
+                });
+                break;
+            case 3:
+                let borrowingAmount = 0;
+                let payNoticeContext = "You don't need to pay.";
+                if (this.state.balance) {
+                    borrowingAmount = this.state.balance.lend;
+                    if (borrowingAmount > 0) {
+                        payNoticeContext = "Don't pay more than " + borrowingAmount + " DCF.";
+                    }
+                }
+                this.setState({
+                    requestNotice:
+                        <div className="alert alert-info" role="alert">
+                            You are borrowing <strong>{borrowingAmount} DCF</strong>. {payNoticeContext}
+                        </div>
+                });
+                break;
+        }
+    }
+
     timeAgo(time) {
         const units = [
             {name: "second", limit: 60, in_seconds: 1},
@@ -237,6 +320,12 @@ class WalletPage extends Component {
         return "";
     }
 
+    hideAlert() {
+        this.setState({
+            alert: null
+        });
+    }
+
     render() {
         let currentUser = this.props.currentUser;
         let userDataAvailable = (currentUser !== undefined);
@@ -246,6 +335,7 @@ class WalletPage extends Component {
         let isUser = Roles.userIsInRole(currentUser, 'user');
 
         let balance = this.state.balance;
+        let allBalance = this.state.allBalances;
         let currentMonth = new Date().getMonth();
         let currentYear = new Date().getFullYear();
 
@@ -417,6 +507,8 @@ class WalletPage extends Component {
 
         return (
             <div>
+                {this.state.alert}
+
                 <div className="container">
                     <header>
                         <h1>Wallet</h1>
@@ -463,12 +555,16 @@ class WalletPage extends Component {
                                     <h3>Create new request</h3>
                                     <div className='container-fluid'>
                                         <form>
+                                            {this.state.requestNotice}
                                             <div className="row">
                                                 <div className="col-xs-6 col-sm-6 col-md-3">
                                                     <div className="form-group">
                                                         <label htmlFor="typeInput">Request type</label>
                                                         <select className="form-control input-lg" id="typeInput"
-                                                                defaultValue='Deposit'>
+                                                                defaultValue='Deposit'
+                                                                onChange={() => {
+                                                                    this.onChangeRequestType();
+                                                                }}>
                                                             <option value="0">Deposit</option>
                                                             <option value="2">Borrow</option>
                                                             <option value="3">Pay</option>

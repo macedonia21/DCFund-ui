@@ -385,7 +385,10 @@ Meteor.methods({
                         const borrowStep3 = _.groupBy(borrowStep2, 'wallet');
                         const borrowStep4 = _.mapValues(borrowStep3, (wallet) => {
                             const lastBorrowDate = new Date(_.last(wallet).timestamp);
-                            const dueDate = new Date(lastBorrowDate.getFullYear(), lastBorrowDate.getMonth() + 1, 0);
+                            let dueDate = new Date(lastBorrowDate.getFullYear(), lastBorrowDate.getMonth() + 1, 0);
+                            if (lastBorrowDate.getDate() > 20) {
+                                dueDate = new Date(lastBorrowDate.getFullYear(), lastBorrowDate.getMonth() + 2, 0);
+                            }
 
                             return {
                                 borrowTimestamp: lastBorrowDate.getTime(),
@@ -454,6 +457,52 @@ Meteor.methods({
                     }
 
                     return reportData;
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        } catch (e) {
+            throw new Meteor.Error(e.message);
+        }
+    },
+
+    'withdraw.get'() {
+        if (!Meteor.userId) {
+            throw new Meteor.Error('not-authorized');
+        }
+
+        try {
+            const result = HTTP.get(Meteor.settings.public.apiURL + '/blocks');
+            if (result) {
+                if (result.data) {
+                    let depositData = null;
+
+                    const blockData = _.filter(result.data.slice(1), (block) => {
+                        return block.data[0].isApproved === true
+                    });
+
+                    // Wallet Balances
+                    const walletBalances = _.last(blockData).balances;
+
+                    // Wallet Owner
+                    const ownerStep1 = _.map(blockData, (block) => {
+                        return block.data[0].txDCFs[0]
+                    });
+                    const ownerStep2 = _.groupBy(ownerStep1, 'wallet');
+                    const walletOwner = _.mapValues(ownerStep2, (txDCFs) => {
+                        return _.last(txDCFs).walletOwner;
+                    });
+
+                    // Deposit Report Data
+                    if (walletBalances.slice(1).length > 0) {
+                        depositData = _.forEach(walletBalances.slice(1), (wallet) => {
+                            return wallet.walletOwner = walletOwner[wallet.wallet];
+                        });
+                    }
+
+                    return depositData;
                 } else {
                     return null;
                 }

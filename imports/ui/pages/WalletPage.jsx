@@ -9,28 +9,10 @@ class WalletPage extends Component {
     constructor(props) {
         super(props);
 
-        // this.state = {
-        //     // Data
-        //     balance: {},
-        //     allBalances: [],
-        //     pendTransPool: [],
-        //     apprTransPool: [],
-        //     apprFiltedTransPool: [],
-        //     didMount: false,
-        //
-        //     // Request send flags
-        //     requestSending: false,
-        //     requestRemoving: false,
-        //
-        //     // Filter flags
-        //     apprTransTypeFilter: -1,
-        //
-        //     // Request Type Notice
-        //     requestNotice: null,
-        //
-        //     // SweetAlert
-        //     alert: null
-        // };
+        this.state = {
+            // SweetAlert
+            alert: null
+        };
     }
 
     shouldComponentUpdate(nextProps, nextState) {

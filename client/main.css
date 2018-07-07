@@ -59,6 +59,10 @@ main {
     background-color: transparent;
 }
 
+.input-right {
+    text-align: right;
+}
+
 .loader {
     display: inline-block;
 }
@@ -69,6 +73,15 @@ main {
 
 .td-amount-zero {
     background-color: #f9f9f9;
+}
+
+.qr-wallet {
+    margin-bottom: 20px;
+}
+
+.custom-navbar-text {
+    margin-left: 15px;
+    margin-right: 15px;
 }
 
 input[readonly] {

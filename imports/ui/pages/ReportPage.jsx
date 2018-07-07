@@ -1,11 +1,10 @@
 import React, {Component} from 'react';
-import {ec} from 'elliptic';
 import {HorizontalBar} from 'react-chartjs-2';
 import {NotificationManager} from 'react-notifications';
 import {withTracker} from 'meteor/react-meteor-data';
 import {Link} from 'react-router-dom';
 import {DotLoader} from 'react-spinners';
-import QRCode from 'qrcode-react';
+import * as _ from 'lodash';
 
 class ReportPage extends Component {
     constructor(props) {
@@ -18,7 +17,8 @@ class ReportPage extends Component {
 
             borrowReportData: null,
             borrowChartData: null,
-            depositReportData: null
+            depositReportData: null,
+            fundTotal: 0
         };
     }
 
@@ -38,19 +38,22 @@ class ReportPage extends Component {
                 this.setState({
                     borrowReportData: null,
                     borrowChartData: null,
-                    depositReportData: null
+                    depositReportData: null,
+                    fundTotal: 0
                 });
             } else {
                 if (res.borrowReportData) {
                     this.setState({borrowReportData: res.borrowReportData});
                 }
-
                 if (res.borrowChartData) {
                     this.setState({borrowChartData: res.borrowChartData});
                 }
-
                 if (res.depositReportData) {
                     this.setState({depositReportData: res.depositReportData});
+
+                }
+                if (res.fundTotal) {
+                    this.setState({fundTotal: res.fundTotal});
                 }
             }
             this.setState({
@@ -74,13 +77,7 @@ class ReportPage extends Component {
     }
 
     render() {
-        const currentUser = this.props.currentUser;
-        const userDataAvailable = (currentUser !== undefined);
-        const loggedIn = (currentUser && userDataAvailable);
-        const isAdmin = Roles.userIsInRole(currentUser, 'administrator');
-        const isApprover = Roles.userIsInRole(currentUser, 'approver');
-        const isUser = Roles.userIsInRole(currentUser, 'user');
-
+        const fundTotal = this.state.fundTotal;
         // Borrow Report Render
         const borrowReportData = this.state.borrowReportData;
         let borrowReportRender = [1].map(() => {
@@ -115,10 +112,32 @@ class ReportPage extends Component {
                 }
                 return (
                     <tr key="1">
-                        <th>Total</th>
-                        <td className="warning">{sumBorrowAmount}</td>
-                        <td className="warning">{}</td>
-                        <td className="warning">{}</td>
+                        <th>Out - Total</th>
+                        <td className="warning" colSpan={3}>{sumBorrowAmount}</td>
+                    </tr>
+                );
+            });
+
+            const borrowAvailRowRender = [1].map(() => {
+                if (sumBorrowAmount === 0) {
+                    sumBorrowAmount = undefined;
+                }
+                return (
+                    <tr key="1">
+                        <th>Balance</th>
+                        <td className="info" colspan={3}>{fundTotal - sumBorrowAmount}</td>
+                    </tr>
+                );
+            });
+
+            const borrowFundTotalRowRender = [1].map(() => {
+                if (sumBorrowAmount === 0) {
+                    sumBorrowAmount = undefined;
+                }
+                return (
+                    <tr key="1">
+                        <th>DC Fund - Total</th>
+                        <td className="success" colSpan={3}>{fundTotal}</td>
                     </tr>
                 );
             });
@@ -137,6 +156,8 @@ class ReportPage extends Component {
                         <tbody>
                         {borrowReportRowRender}
                         {borrowTotalRowRender}
+                        {borrowAvailRowRender}
+                        {borrowFundTotalRowRender}
                         </tbody>
                     </table>
                 )
@@ -147,7 +168,7 @@ class ReportPage extends Component {
         const borrowChartData = this.state.borrowChartData;
         let borrowChartRender = [1].map(() => {
             return (
-                <div key="1"></div>
+                <div key="1"/>
             )
         });
         if (borrowChartData) {
@@ -224,35 +245,35 @@ class ReportPage extends Component {
                 const walletDepositData = depositReportData[wallet];
 
                 const walletDepositCol1 = walletDepositData[depositTableHeader[0]];
-                if (walletDepositCol1 > 0) {
+                if (walletDepositCol1 > 0 || walletDepositCol1 < 0) {
                     fundDepositCol1 = fundDepositCol1 + walletDepositCol1;
                 }
                 const walletDepositCol2 = walletDepositData[depositTableHeader[1]];
-                if (walletDepositCol2 > 0) {
+                if (walletDepositCol2 > 0 || walletDepositCol2 < 0) {
                     fundDepositCol2 = fundDepositCol2 + walletDepositCol2;
                 }
                 const walletDepositCol3 = walletDepositData[depositTableHeader[2]];
-                if (walletDepositCol3 > 0) {
+                if (walletDepositCol3 > 0 || walletDepositCol3 < 0) {
                     fundDepositCol3 = fundDepositCol3 + walletDepositCol3;
                 }
                 const walletDepositCol4 = walletDepositData[depositTableHeader[3]];
-                if (walletDepositCol4 > 0) {
+                if (walletDepositCol4 > 0 || walletDepositCol4 < 0) {
                     fundDepositCol4 = fundDepositCol4 + walletDepositCol4;
                 }
                 const walletDepositCol5 = walletDepositData[depositTableHeader[4]];
-                if (walletDepositCol5 > 0) {
+                if (walletDepositCol5 > 0 || walletDepositCol5 < 0) {
                     fundDepositCol5 = fundDepositCol5 + walletDepositCol5;
                 }
                 const walletDepositCol6 = walletDepositData[depositTableHeader[5]];
-                if (walletDepositCol6 > 0) {
+                if (walletDepositCol6 > 0 || walletDepositCol6 < 0) {
                     fundDepositCol6 = fundDepositCol6 + walletDepositCol6;
                 }
                 const walletDepositCol7 = walletDepositData[depositTableHeader[6]];
-                if (walletDepositCol7 > 0) {
+                if (walletDepositCol7 > 0 || walletDepositCol7 < 0) {
                     fundDepositCol7 = fundDepositCol7 + walletDepositCol7;
                 }
                 const walletDepositTotal = walletDepositData["walletDepositTotal"];
-                if (walletDepositTotal > 0) {
+                if (walletDepositTotal !== 0) {
                     fundDepositTotal = fundDepositTotal + walletDepositTotal;
                 }
 
@@ -298,7 +319,7 @@ class ReportPage extends Component {
                 }
                 return (
                     <tr key="1">
-                        <th>DC Fund</th>
+                        <th>DC Fund - Total</th>
                         <td className="warning">{fundDepositTotal}</td>
                         <td className="warning">{fundDepositCol1}</td>
                         <td className="warning">{fundDepositCol2}</td>
@@ -352,13 +373,13 @@ class ReportPage extends Component {
                     <div className="row">
                         <div className="col-xs-12 col-sm-8 col-md-6">
                             {this.state.loadingReport ?
-                            <div className="loader-container">
-                                <DotLoader
-                                    size={60}
-                                    color={'#86bc25'}
-                                    loading={this.state.loadingReport}
-                                />
-                            </div> : borrowReportRender}
+                                <div className="loader-container">
+                                    <DotLoader
+                                        size={60}
+                                        color={'#86bc25'}
+                                        loading={this.state.loadingReport}
+                                    />
+                                </div> : borrowReportRender}
                         </div>
                         <div className="col-xs-12 col-sm-8 col-md-6">
                             {this.state.loadingReport ?

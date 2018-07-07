@@ -49,30 +49,30 @@ export default class AppContainer extends Component {
                             <div className="navbar-header">
                                 <button type="button" className="navbar-toggle" data-toggle="collapse"
                                         data-target="#myNavbar">
-                                    <span className="icon-bar"></span>
-                                    <span className="icon-bar"></span>
-                                    <span className="icon-bar"></span>
+                                    <span className="icon-bar"/>
+                                    <span className="icon-bar"/>
+                                    <span className="icon-bar"/>
                                 </button>
                                 <a className="navbar-brand" href="/">DCFund Wallet</a>
                             </div>
                             <div className="collapse navbar-collapse" id="myNavbar">
                                 <ul className="nav navbar-nav">
                                     <li>
-                                        <p className="navbar-text">Testnet</p>
+                                        <p className="custom-navbar-text navbar-text">Testnet</p>
                                     </li>
                                 </ul>
                                 <ul className="nav navbar-nav navbar-right">
                                     <li><a href="/report">
-                                        <span className="glyphicon glyphicon-file" aria-hidden="true"></span> Report
+                                        <span className="glyphicon glyphicon-file" aria-hidden="true"/> Report
                                     </a></li>
                                     <li><a href="/block">
-                                        <span className="glyphicon glyphicon-link" aria-hidden="true"></span> Blockchain
+                                        <span className="glyphicon glyphicon-link" aria-hidden="true"/> Blockchain
                                     </a></li>
                                     <li><a href="/profile">
-                                        <span className="glyphicon glyphicon-user" aria-hidden="true"></span> Profile
+                                        <span className="glyphicon glyphicon-user" aria-hidden="true"/> Profile
                                     </a></li>
                                     <li><a href="#" onClick={this.logout}>
-                                        <span className="glyphicon glyphicon-off" aria-hidden="true"></span> Logout
+                                        <span className="glyphicon glyphicon-off" aria-hidden="true"/> Logout
                                     </a></li>
                                 </ul>
                             </div>
@@ -85,7 +85,7 @@ export default class AppContainer extends Component {
                 <footer className="footer">
                     <div className="container">
                         <span className="text-muted">
-                            Copyright © {new Date().getFullYear()} DCFund Wallet <i>Alpha</i>
+                            Copyright © {new Date().getFullYear()} DCFund Wallet <i>Beta</i>
                         </span>
                     </div>
                 </footer>

@@ -56,7 +56,7 @@ class TransactionPage extends Component {
         let userDataAvailable = (currentUser !== undefined);
         let loggedIn = (currentUser && userDataAvailable);
 
-        transaction = this.state.transaction;
+        const transaction = this.state.transaction;
         let txDCFs = () => {
             return (
                 <div>

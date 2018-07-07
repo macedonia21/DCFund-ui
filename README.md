@@ -14,7 +14,7 @@ To-do lists
 * Balance for DCFund - **Done**
 * Balance for report - **Done**
 * Check fund balance when user raise borrow request - **Done**
-* Check borrowing amount when user raise pay request - **Done*
+* Check borrowing amount when user raise pay request - **Done**
 * Check fund balance when approve borrow request - **Done**
 * Withdraw feature - **Done**
 * Optimize React components

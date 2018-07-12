@@ -4,6 +4,7 @@ import {withTracker} from 'meteor/react-meteor-data';
 import WalletInfoComp from '../components/WalletInfoComp';
 import NewRequestComp from '../components/NewRequestComp';
 import ApproveRequestComp from '../components/ApproveRequestComp';
+import SendMailComp from '../components/SendMailComp';
 
 class WalletPage extends Component {
     constructor(props) {
@@ -11,12 +12,41 @@ class WalletPage extends Component {
 
         this.state = {
             // SweetAlert
-            alert: null
+            alert: null,
+
+            // Loading flags
+            loadingBalance: true,
+
+            // Data
+            balance: {},
+            allBalances: [],
         };
     }
 
     shouldComponentUpdate(nextProps, nextState) {
         return this.state !== nextState || this.props !== nextProps;
+    }
+
+    componentDidUpdate() {
+        if (this.state.loadingBalance) {
+            this.fetchBalance();
+        }
+    }
+
+    fetchBalance() {
+        Meteor.call('balance.get', (err, res) => {
+            if (err) {
+                this.setState({balance: null});
+            } else {
+                if (res.myBalance) {
+                    this.setState({balance: res.myBalance});
+                }
+                if (res.allBalances) {
+                    this.setState({allBalances: res.allBalances});
+                }
+            }
+            this.setState({loadingBalance: false});
+        });
     }
 
     render() {
@@ -36,14 +66,20 @@ class WalletPage extends Component {
 
                     <div className="row">
                         <div className="col-sm-12 col-md-4">
-                            <WalletInfoComp/>
+                            <WalletInfoComp balance={this.state.balance}
+                                            allBalances={this.state.allBalances}
+                                            loadingBalance={this.state.loadingBalance}/>
                         </div>
                         <div className="col-sm-12 col-md-8">
-                            {isAdmin || isUser ?
-                                <NewRequestComp/> : ''}
+                            {isUser ?
+                                <NewRequestComp balance={this.state.balance}
+                                                allBalances={this.state.allBalances}/> : ''}
 
-                            {isAdmin || isApprover ?
+                            {isApprover ?
                                 <ApproveRequestComp/> : ''}
+
+                            {isAdmin ?
+                                <SendMailComp/> : ''}
                         </div>
                     </div>
                 </div>

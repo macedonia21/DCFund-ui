@@ -4,7 +4,7 @@ import {withTracker} from 'meteor/react-meteor-data';
 import {Link} from 'react-router-dom';
 import {DotLoader} from 'react-spinners';
 
-import { Requests } from '../../api/blockchain';
+import {Requests} from '../../api/blockchain';
 
 class NewRequestComp extends Component {
     constructor(props) {
@@ -14,7 +14,9 @@ class NewRequestComp extends Component {
             // Loading flags
             loadingPendTrans: false,
 
-            // Data
+            // Data// Data
+            balance: {},
+            allBalances: [],
             pendTransPool: [],
 
             // Request send flags
@@ -102,17 +104,15 @@ class NewRequestComp extends Component {
                 let borrowingAmt = 0;
                 let borrowQuota = 0;
                 let borrowNoticeContext = "Cannot borrow from fund.";
-                if (this.state.balance) {
-                    borrowingAmt = this.state.balance.lend;
+                if (this.props.balance) {
+                    borrowingAmt = this.props.balance.lend;
                     borrowQuota = 20 - borrowingAmt;
                 }
-                if (this.state.allBalances && this.state.allBalances[0]) {
-                    availableFund = this.state.allBalances[0].deposit - this.state.allBalances[0].lend;
+                if (this.props.allBalances && this.props.allBalances[0]) {
+                    availableFund = this.props.allBalances[0].deposit - this.props.allBalances[0].lend;
                     if (availableFund > borrowQuota) {
-                        console.log('1.' + availableFund + '-' + borrowQuota);
                         borrowNoticeContext = "You can borrow up to " + borrowQuota + " DCF.";
                     } else if (borrowQuota > availableFund && availableFund > 0) {
-                        console.log('2.' + availableFund + '-' + borrowQuota);
                         borrowNoticeContext = "You can borrow up to " + availableFund + " DCF.";
                     }
                 }
@@ -128,8 +128,8 @@ class NewRequestComp extends Component {
                 let borrowingAmount = 0;
                 let borrowAmtNotice = "0 DCF";
                 let payNoticeContext = "You don't need to pay.";
-                if (this.state.balance) {
-                    borrowingAmount = this.state.balance.lend;
+                if (this.props.balance) {
+                    borrowingAmount = this.props.balance.lend;
                     if (borrowingAmount > 0) {
                         borrowAmtNotice = borrowingAmount + " DCF";
                         payNoticeContext = "Don't pay more than " + borrowingAmount + " DCF.";

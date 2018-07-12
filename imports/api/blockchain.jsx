@@ -1,6 +1,5 @@
 import {Meteor} from 'meteor/meteor';
 import {Mongo} from 'meteor/mongo';
-import {Accounts} from 'meteor/accounts-base';
 import {HTTP} from 'meteor/http';
 import {check} from 'meteor/check';
 import {ec} from 'elliptic';
@@ -8,6 +7,15 @@ import * as _ from 'lodash';
 import * as CryptoJS from 'crypto-js';
 
 export const Requests = new Mongo.Collection('requests');
+
+smtpapi = require('smtpapi');
+
+const templateNewRequest = 'f8fe08b6-2a3c-4ed3-a2c4-7e4f92a2ac7b';
+const templateRequestApprove = '4c8eae2b-6a43-4f68-8683-36025dacd41e';
+const templateRequestReject = '476da337-a470-48cb-87c6-e99ed9994a1c';
+const subjectNewRequest = '[DCFund] You have new request';
+const subjectRequestApproved = '[DCFund] Your request is approved';
+const subjectRequestRejected = '[DCFund] Your request is rejected';
 
 if (Meteor.isServer) {
     // This code only runs on the server
@@ -282,7 +290,46 @@ if (Meteor.isServer) {
 
                 result = HTTP.post(Meteor.settings.public.apiURL + '/sendTransaction', requestData);
                 if (result) {
+                    // Insert new request
+                    result.data.userEmail = Meteor.user().emails[0].address;
                     Requests.insert(result.data);
+
+                    // Send email to approver
+                    const approver = Meteor.users.findOne({roles: 'approver'});
+                    let requestType = 'deposit request';
+                    switch (requestData.data.type) {
+                        case 0:
+                            break;
+                        case 1:
+                            requestType = 'withdraw request';
+                            break;
+                        case 2:
+                            requestType = 'borrow request';
+                            break;
+                        case 3:
+                            requestType = 'pay request';
+                            break;
+                    }
+                    let emailData = {
+                        'data': {
+                            'templateId': templateNewRequest,
+                            'subject': subjectNewRequest,
+                            'toAddress': approver.emails[0].address,
+                            'receiver': approver.profile.fullName,
+                            'arrayType': [requestType],
+                            'arrayUser': [requestData.data.walletOwner],
+                            'arrayAmount': [requestData.data.amount]
+                        }
+                    };
+                    Meteor.call('email.send', emailData, (err, res) => {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            console.log('email sent');
+                        }
+                    });
+
+                    // Return
                     return result;
                 } else {
                     return null;
@@ -343,14 +390,63 @@ if (Meteor.isServer) {
             try {
                 const result = HTTP.post(Meteor.settings.public.apiURL + '/confirmBlock', requestData);
                 if (result) {
+                    // Update request
                     Requests.update({
                         id: requestData.data.txId
                     }, {$set: {isApproved: requestData.data.isApproved}});
+
+                    // Send email to user
+                    const request = Requests.findOne({id: requestData.data.txId});
+                    console.log(request);
+                    const txDCF = request.txDCFs[0];
+                    let requestType = 'deposit request';
+                    switch (txDCF.type) {
+                        case 0:
+                            break;
+                        case 1:
+                            requestType = 'withdraw request';
+                            break;
+                        case 2:
+                            requestType = 'borrow request';
+                            break;
+                        case 3:
+                            requestType = 'pay request';
+                            break;
+                    }
+                    let subject = subjectRequestApproved;
+                    let template = templateRequestApprove;
+                    if (!requestData.data.isApproved) {
+                        subject = subjectRequestRejected;
+                        template = templateRequestReject;
+                    }
+                    let emailData = {
+                        'data': {
+                            'templateId': template,
+                            'subject': subject,
+                            'toAddress': request.userEmail,
+                            'receiver': txDCF.walletOwner,
+                            'arrayType': [requestType],
+                            'arrayUser': [''],
+                            'arrayAmount': [txDCF.amount]
+                        }
+                    };
+                    console.log(emailData);
+                    Meteor.call('email.send', emailData, (err, res) => {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            console.log('email sent');
+                        }
+                    });
+
+                    // Return
                     return result;
                 } else {
+                    console.log(error);
                     return null;
                 }
             } catch (e) {
+                console.log(e);
                 throw new Meteor.Error(e.message);
             }
         },
@@ -609,12 +705,24 @@ if (Meteor.isServer) {
             }
         },
 
-        'email.send'(receiver, subject, text) {
+        'email.send'(emailData) {
+            let header = new smtpapi();
+            header.addTo(emailData.data.toAddress);
+            header.addFilter('templates', 'enable', 1);
+            header.addFilter('templates', 'template_id', emailData.data.templateId);
+            header.addSubstitution('receiver', emailData.data.receiver);
+            header.addSubstitution('type', emailData.data.arrayType);
+            header.addSubstitution('user', emailData.data.arrayUser);
+            header.addSubstitution('amount', emailData.data.arrayAmount);
+            const headers = {'x-smtpapi': header.jsonString()};
+
             Email.send({
-                from: "noreply@dcfundapp.com",
-                to: receiver,
-                subject: subject,
-                text: text
+                "from": "noreply@dcfund.app",
+                "to": "dummy@dcfund.app",
+                "subject": emailData.data.subject,
+                "text": "dummy",
+                "html": "dummy",
+                "headers": headers
             });
         },
     });

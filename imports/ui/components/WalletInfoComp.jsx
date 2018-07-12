@@ -21,49 +21,22 @@ class WalletInfoComp extends Component {
         return this.state !== nextState || this.props !== nextProps;
     }
 
-    componentDidMount() {
-        this.setState({didMount: true});
-        this.fetchBalance();
-    }
-
-    componentDidUpdate() {
-        if (this.state.loadingBalance) {
-            this.fetchBalance();
-        }
-    }
-
-    fetchBalance() {
-        Meteor.call('balance.get', (err, res) => {
-            if (err) {
-                this.setState({balance: null});
-            } else {
-                if (res.myBalance) {
-                    this.setState({balance: res.myBalance});
-                }
-                if (res.allBalances) {
-                    this.setState({allBalances: res.allBalances});
-                }
-            }
-            this.setState({loadingBalance: false});
-        });
-    }
-
     render() {
         let currentUser = this.props.currentUser;
         let userDataAvailable = (currentUser !== undefined);
         let loggedIn = (currentUser && userDataAvailable);
         let isApprover = Roles.userIsInRole(currentUser, 'approver');
 
-        let balance = this.state.balance;
+        let balance = this.props.balance;
 
         return (
             <div>
-                {this.state.loadingBalance ?
+                {this.props.loadingBalance ?
                     <div className="loader-container">
                         <h3><DotLoader
                             size={26}
                             color={'#86bc25'}
-                            loading={this.state.loadingBalance}
+                            loading={this.props.loadingBalance}
                         /></h3></div>
                     :
                     <div>

@@ -125,7 +125,7 @@ class ReportPage extends Component {
                 return (
                     <tr key="1">
                         <th>Balance</th>
-                        <td className="info" colspan={3}>{fundTotal - sumBorrowAmount}</td>
+                        <td className="info" colSpan={3}>{fundTotal - sumBorrowAmount}</td>
                     </tr>
                 );
             });

@@ -27,6 +27,10 @@ class WalletPage extends Component {
         return this.state !== nextState || this.props !== nextProps;
     }
 
+    componentDidMount() {
+        this.fetchBalance();
+    }
+
     componentDidUpdate() {
         if (this.state.loadingBalance) {
             this.fetchBalance();

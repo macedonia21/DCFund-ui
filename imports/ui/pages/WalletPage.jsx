@@ -19,8 +19,10 @@ class WalletPage extends Component {
 
             // Data
             balance: {},
-            allBalances: [],
+            allBalances: []
         };
+
+        this.forceRefresh = this.forceRefresh.bind(this);
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -35,6 +37,12 @@ class WalletPage extends Component {
         if (this.state.loadingBalance) {
             this.fetchBalance();
         }
+    }
+
+    forceRefresh() {
+        this.setState({
+            loadingBalance: true
+        });
     }
 
     fetchBalance() {
@@ -80,7 +88,9 @@ class WalletPage extends Component {
                                                 allBalances={this.state.allBalances}/> : ''}
 
                             {isApprover ?
-                                <ApproveRequestComp balance={this.state.balance}/> : ''}
+                                <ApproveRequestComp
+                                    balance={this.state.balance}
+                                    refresh={this.forceRefresh}/> : ''}
 
                             {isAdmin ?
                                 <SendMailComp/> : ''}

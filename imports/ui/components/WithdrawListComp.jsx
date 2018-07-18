@@ -216,6 +216,7 @@ class WithdrawListComp extends Component {
                 this.setState({loadingDepositData: true});
                 setTimeout(() => {
                     this.setState({requestSending: false});
+                    this.props.refresh();
                 }, 1000);
             }
         });
@@ -261,6 +262,7 @@ class WithdrawListComp extends Component {
                     this.setState({loadingDepositData: true});
                     setTimeout(() => {
                         this.setState({requestSending: false});
+                        this.props.refresh();
                     }, 1000);
                 }
             });

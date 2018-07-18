@@ -71,6 +71,7 @@ class ApproveRequestComp extends Component {
                 } else {
                     NotificationManager.success('Request is rejected', 'Success', 3000);
                 }
+                this.props.refresh();
             }
         });
     }
@@ -270,7 +271,9 @@ class ApproveRequestComp extends Component {
                         </div>
                     </div>
                     <div role="tabpanel" className="tab-pane fade" id="withdraw">
-                        <WithdrawListComp balance={this.props.balance}/>
+                        <WithdrawListComp
+                            balance={this.props.balance}
+                            refresh={this.props.refresh}/>
                     </div>
                 </div>
             </div>

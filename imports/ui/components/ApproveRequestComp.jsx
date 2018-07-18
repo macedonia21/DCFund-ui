@@ -270,7 +270,7 @@ class ApproveRequestComp extends Component {
                         </div>
                     </div>
                     <div role="tabpanel" className="tab-pane fade" id="withdraw">
-                        <WithdrawListComp/>
+                        <WithdrawListComp balance={this.props.balance}/>
                     </div>
                 </div>
             </div>

@@ -13,9 +13,11 @@ smtpapi = require('smtpapi');
 const templateNewRequest = 'f8fe08b6-2a3c-4ed3-a2c4-7e4f92a2ac7b';
 const templateRequestApprove = '4c8eae2b-6a43-4f68-8683-36025dacd41e';
 const templateRequestReject = '476da337-a470-48cb-87c6-e99ed9994a1c';
+const templateWithdraw = 'f46635a1-ad77-4442-8025-3fab6d335ae2';
 const subjectNewRequest = '[DCFund] You have new request';
 const subjectRequestApproved = '[DCFund] Your request is approved';
 const subjectRequestRejected = '[DCFund] Your request is rejected';
+const subjectWithdraw = '[DCFund] You received withdrawal';
 
 if (Meteor.isServer) {
     // This code only runs on the server
@@ -696,6 +698,34 @@ if (Meteor.isServer) {
 
                 result = HTTP.post(Meteor.settings.public.apiURL + '/confirmWithdrawBlock', requestData);
                 if (result) {
+                    // Send email to user
+                    const user = Meteor.users.findOne({"profile.address": requestData.data.wallet});
+                    console.log(user);
+                    if (user) {
+                        const subject = subjectWithdraw;
+                        const template = templateWithdraw;
+                        let emailData = {
+                            'data': {
+                                'templateId': template,
+                                'subject': subject,
+                                'toAddress': user.emails[0].address,
+                                'receiver': user.profile.fullName,
+                                'arrayType': [''],
+                                'arrayUser': [''],
+                                'arrayAmount': [requestData.data.amount]
+                            }
+                        };
+                        console.log(emailData);
+                        Meteor.call('email.send', emailData, (err, res) => {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                console.log('email sent');
+                            }
+                        });
+                    }
+
+                    // Return
                     return result;
                 } else {
                     return null;

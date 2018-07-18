@@ -21,6 +21,9 @@ class WithdrawListComp extends Component {
             // Request send flags
             requestSending: false,
 
+            // Request Type Notice
+            requestNotice: null,
+
             // SweetAlert
             alert: null
         };
@@ -49,6 +52,21 @@ class WithdrawListComp extends Component {
                 this.setState({depositData: null});
             } else {
                 this.setState({depositData: res});
+                const totalWithdraw = _.reduce(_.map(this.state.depositData, (wallet) => {
+                    return wallet.withdrawAmount;
+                }), (sum, n) => {
+                    return sum + n;
+                }, 0);
+                if (totalWithdraw > (this.props.balance.deposit - this.props.balance.lend)) {
+                    this.setState({
+                        requestNotice:
+                            <div className="alert alert-info" role="alert">
+                                Only <strong>{this.props.balance.deposit - this.props.balance.lend} DCF</strong> is available for withdrawing.
+                            </div>
+                    });
+                } else {
+                    this.setState({requestNotice: null});
+                }
             }
             this.setState({loadingDepositData: false});
         });
@@ -66,6 +84,22 @@ class WithdrawListComp extends Component {
             });
 
             this.setState({depositData: newDepositData});
+
+            const totalWithdraw = _.reduce(_.map(newDepositData, (wallet) => {
+                return wallet.withdrawAmount;
+            }), (sum, n) => {
+                return sum + n;
+            }, 0);
+            if (totalWithdraw > (this.props.balance.deposit - this.props.balance.lend)) {
+                this.setState({
+                    requestNotice:
+                        <div className="alert alert-info" role="alert">
+                            Only <strong>{this.props.balance.deposit - this.props.balance.lend} DCF</strong> is available for withdrawing.
+                        </div>
+                });
+            } else {
+                this.setState({requestNotice: null});
+            }
         }
     }
 
@@ -84,6 +118,22 @@ class WithdrawListComp extends Component {
             });
 
             this.setState({depositData: newDepositData});
+
+            const totalWithdraw = _.reduce(_.map(newDepositData, (wallet) => {
+                return wallet.withdrawAmount;
+            }), (sum, n) => {
+                return sum + n;
+            }, 0);
+            if (totalWithdraw > (this.props.balance.deposit - this.props.balance.lend)) {
+                this.setState({
+                    requestNotice:
+                        <div className="alert alert-info" role="alert">
+                            Only <strong>{this.props.balance.deposit - this.props.balance.lend} DCF</strong> is available for withdrawing.
+                        </div>
+                });
+            } else {
+                this.setState({requestNotice: null});
+            }
         }
     }
 
@@ -225,6 +275,7 @@ class WithdrawListComp extends Component {
 
     render() {
         const depositData = this.state.depositData;
+        const fundBalance = this.props.balance.deposit - this.props.balance.lend;
         let withdrawHeaderRender = '';
         let withdrawRender = [1].map(() => {
             return (
@@ -270,7 +321,11 @@ class WithdrawListComp extends Component {
                             </div>
                             <div className="col-xs-3">
                                 <button type="button" className="btn btn-info"
-                                        disabled={this.state.requestSending}
+                                        disabled={
+                                            totalWithdraw === 0 ||
+                                            totalWithdraw > fundBalance ||
+                                            this.state.requestSending
+                                        }
                                         onClick={() => {
                                             this.onWithdrawAll();
                                         }}>
@@ -306,7 +361,11 @@ class WithdrawListComp extends Component {
                         </div>
                         <div className="col-xs-3">
                             <button type="button" className="btn btn-info"
-                                    disabled={wallet.withdrawAmount === 0 || this.state.requestSending}
+                                    disabled={
+                                        wallet.withdrawAmount === 0 ||
+                                        wallet.withdrawAmount > fundBalance ||
+                                        this.state.requestSending
+                                    }
                                     onClick={() => {
                                         this.onWithdrawOne(idx);
                                     }}>
@@ -336,6 +395,7 @@ class WithdrawListComp extends Component {
                     {this.state.loadingDepositData ? '' :
                         <div>
                             <form className="form-horizontal" role="form">
+                                {this.state.requestNotice}
                                 {withdrawHeaderRender}
                                 {withdrawRender}
                             </form>

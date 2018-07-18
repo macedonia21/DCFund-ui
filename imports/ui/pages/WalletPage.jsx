@@ -80,7 +80,7 @@ class WalletPage extends Component {
                                                 allBalances={this.state.allBalances}/> : ''}
 
                             {isApprover ?
-                                <ApproveRequestComp/> : ''}
+                                <ApproveRequestComp balance={this.state.balance}/> : ''}
 
                             {isAdmin ?
                                 <SendMailComp/> : ''}

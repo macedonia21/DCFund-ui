@@ -58,7 +58,7 @@ export default class AppContainer extends Component {
                             <div className="collapse navbar-collapse" id="myNavbar">
                                 <ul className="nav navbar-nav">
                                     <li>
-                                        <p className="custom-navbar-text navbar-text">Testnet</p>
+                                        <p className="custom-navbar-text navbar-text">Mainnet</p>
                                     </li>
                                 </ul>
                                 <ul className="nav navbar-nav navbar-right">
@@ -85,7 +85,7 @@ export default class AppContainer extends Component {
                 <footer className="footer">
                     <div className="container">
                         <span className="text-muted">
-                            Copyright © {new Date().getFullYear()} DCFund Wallet <i>Beta</i>
+                            Copyright © {new Date().getFullYear()} DCFund Wallet
                         </span>
                     </div>
                 </footer>

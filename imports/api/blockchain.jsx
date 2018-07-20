@@ -260,23 +260,25 @@ if (Meteor.isServer) {
 
                     if (requestData.data.type === 2) {
                         // Borrow
-                        if ((20 - myBalance.lend) < (fundBalances[0].deposit - fundBalances[0].lend)) {
-                            if (requestData.data.amount > (20 - myBalance.lend)) {
-                                throw new Meteor.Error('borrow-more-quota',
-                                    'Request more than borrow quota ' + (20 - myBalance.lend) + ' DCF');
-                            } else if (requestData.data.amount > (fundBalances[0].deposit - fundBalances[0].lend)) {
-                                throw new Meteor.Error('borrow-more-fund',
-                                    'Request more than available fund ' +
-                                    (fundBalances[0].deposit - fundBalances[0].lend) + ' DCF');
-                            }
-                        } else {
-                            if (requestData.data.amount > (fundBalances[0].deposit - fundBalances[0].lend)) {
-                                throw new Meteor.Error('borrow-more-fund',
-                                    'Request more than available fund ' +
-                                    (fundBalances[0].deposit - fundBalances[0].lend) + ' DCF');
-                            } else if (requestData.data.amount > (20 - myBalance.lend)) {
-                                throw new Meteor.Error('borrow-more-quota',
-                                    'Request more than borrow quota ' + (20 - myBalance.lend) + ' DCF');
+                        if (!Roles.userIsInRole(Meteor.user(), 'superuser')) {
+                            if ((20 - myBalance.lend) < (fundBalances[0].deposit - fundBalances[0].lend)) {
+                                if (requestData.data.amount > (20 - myBalance.lend)) {
+                                    throw new Meteor.Error('borrow-more-quota',
+                                        'Request more than borrow quota ' + (20 - myBalance.lend) + ' DCF');
+                                } else if (requestData.data.amount > (fundBalances[0].deposit - fundBalances[0].lend)) {
+                                    throw new Meteor.Error('borrow-more-fund',
+                                        'Request more than available fund ' +
+                                        (fundBalances[0].deposit - fundBalances[0].lend) + ' DCF');
+                                }
+                            } else {
+                                if (requestData.data.amount > (fundBalances[0].deposit - fundBalances[0].lend)) {
+                                    throw new Meteor.Error('borrow-more-fund',
+                                        'Request more than available fund ' +
+                                        (fundBalances[0].deposit - fundBalances[0].lend) + ' DCF');
+                                } else if (requestData.data.amount > (20 - myBalance.lend)) {
+                                    throw new Meteor.Error('borrow-more-quota',
+                                        'Request more than borrow quota ' + (20 - myBalance.lend) + ' DCF');
+                                }
                             }
                         }
                     } else if (requestData.data.type === 3) {

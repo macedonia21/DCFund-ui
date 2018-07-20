@@ -94,6 +94,8 @@ class NewRequestComp extends Component {
     }
 
     onChangeRequestType() {
+        let currentUser = this.props.currentUser;
+        let isSuperUser = Roles.userIsInRole(currentUser, 'superuser');
         const type = parseInt(document.getElementById('typeInput').value);
         switch (type) {
             case 0:
@@ -117,12 +119,14 @@ class NewRequestComp extends Component {
                     }
                 }
 
-                this.setState({
-                    requestNotice:
-                        <div className="alert alert-info" role="alert">
-                            <strong>{availableFund} DCF</strong> is available for lending. {borrowNoticeContext}
-                        </div>
-                });
+                if (!isSuperUser) {
+                    this.setState({
+                        requestNotice:
+                            <div className="alert alert-info" role="alert">
+                                <strong>{availableFund} DCF</strong> is available for lending. {borrowNoticeContext}
+                            </div>
+                    });
+                }
                 break;
             case 3:
                 let borrowingAmount = 0;
@@ -171,6 +175,11 @@ class NewRequestComp extends Component {
     }
 
     render() {
+        let currentUser = this.props.currentUser;
+        let isAdmin = Roles.userIsInRole(currentUser, 'administrator');
+        let isApprover = Roles.userIsInRole(currentUser, 'approver');
+        let isSuperUser = Roles.userIsInRole(currentUser, 'superuser');
+        let isUser = Roles.userIsInRole(currentUser, 'user');
         let currentMonth = new Date().getMonth();
         let currentYear = new Date().getFullYear();
 
@@ -265,7 +274,7 @@ class NewRequestComp extends Component {
                                     <input type="number"
                                            className="form-control input-lg"
                                            id="amountInput"
-                                           placeholder="Amount" min="0.1" max="20"
+                                           placeholder="Amount" min="0.1" max={isSuperUser ? "" : "20"}
                                            step="0.1"
                                            defaultValue="1"/>
                                 </div>

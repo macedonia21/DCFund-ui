@@ -27,6 +27,7 @@ export default class SignupPage extends Component {
         if (password.length < 6) {
             ReactDOM.findDOMNode(this.refs.inputPass).value = '';
             ReactDOM.findDOMNode(this.refs.inputConfirmPass).value = '';
+            this.setState({passStrength: 'invalid'});
 
             NotificationManager.error('Password must have at least 6 characters', 'Error', 3000);
             return;
@@ -35,6 +36,7 @@ export default class SignupPage extends Component {
         if (password !== confirmPassword) {
             ReactDOM.findDOMNode(this.refs.inputPass).value = '';
             ReactDOM.findDOMNode(this.refs.inputConfirmPass).value = '';
+            this.setState({passStrength: 'invalid'});
 
             NotificationManager.error('Confirm password not correct', 'Error', 3000);
             return;
@@ -52,6 +54,7 @@ export default class SignupPage extends Component {
                 console.log(this.refs);
                 ReactDOM.findDOMNode(this.refs.inputPass).value = '';
                 ReactDOM.findDOMNode(this.refs.inputConfirmPass).value = '';
+                this.setState({passStrength: 'invalid'});
 
                 NotificationManager.error(err.reason, 'Error', 3000);
             } else {
@@ -62,6 +65,7 @@ export default class SignupPage extends Component {
                 ReactDOM.findDOMNode(this.refs.inputEmail).value = '';
                 ReactDOM.findDOMNode(this.refs.inputPass).value = '';
                 ReactDOM.findDOMNode(this.refs.inputConfirmPass).value = '';
+                this.setState({passStrength: 'invalid'});
 
                 NotificationManager.success('Your account created, open wallet in few seconds', 'Success', 3000);
                 setTimeout(() => {
@@ -72,9 +76,9 @@ export default class SignupPage extends Component {
     }
 
     estimatePassStreng(ref) {
-        var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
-        var mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
-        var weakRegex = new RegExp("^(?=.{6,})");
+        const strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+        const mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
+        const weakRegex = new RegExp("^(?=.{6,})");
 
         let pass = '';
         if (ref === 'inputPass') {
@@ -106,9 +110,10 @@ export default class SignupPage extends Component {
         return (
             <div className="container">
                 <form id="login-form" className="form center-block form-signup" onSubmit={this.handleSubmit}>
-                    <h1 className="text-center">Sign up</h1>
+                    <h2 className="text-center">Sign up</h2>
                     <div className="form-group">
-                        <input type="text" ref="inputUser" id="signup-username" className="form-control input-lg" placeholder="Username"
+                        <input type="text" ref="inputUser" id="signup-username" className="form-control input-lg"
+                               placeholder="Username"
                                required/>
                     </div>
                     <div className="form-group">
@@ -120,33 +125,36 @@ export default class SignupPage extends Component {
                                placeholder="Last name" required/>
                     </div>
                     <div className="form-group">
-                        <input type="email" ref="inputEmail" id="signup-email" className="form-control input-lg" placeholder="Email"
+                        <input type="email" ref="inputEmail" id="signup-email" className="form-control input-lg"
+                               placeholder="Email"
                                required/>
                     </div>
                     <div className="form-group inner-addon-lg right-addon">
                         {passStrength === 'weak' ?
-                            <i className="glyphicon glyphicon-certificate text-brand-error"></i> :
+                            <i className="glyphicon glyphicon-certificate text-brand-error"/> :
                             (passStrength === 'medium' ?
-                                <i className="glyphicon glyphicon-certificate text-brand-warning"></i> :
+                                <i className="glyphicon glyphicon-certificate text-brand-warning"/> :
                                 (passStrength === 'strong' ?
-                                <i className="glyphicon glyphicon-certificate text-brand-success"></i>:
-                                ''))}
+                                    <i className="glyphicon glyphicon-certificate text-brand-success"/> :
+                                    ''))}
                         <input type="password" ref="inputPass" id="signup-password" className="form-control input-lg"
                                placeholder="Password" required
-                                onChange={() => {
-                                    this.estimatePassStreng('inputPass');
-                                }}/>
+                               onChange={() => {
+                                   this.estimatePassStreng('inputPass');
+                               }}/>
                     </div>
                     <div className="form-group inner-addon-lg right-addon">
-                        <input type="password" ref="inputConfirmPass"  id="signup-confirm-password" className="form-control input-lg"
+                        <input type="password" ref="inputConfirmPass" id="signup-confirm-password"
+                               className="form-control input-lg"
                                placeholder="Confirm password" required/>
                     </div>
-                    <div className="form-group">
+                    <div className="form-group text-center">
                         <input type="submit" id="login-button" className="btn btn-lg btn-success btn-block"
                                value="Sign Up"/>
                     </div>
-                    <div className="form-group">
+                    <div className="form-group text-center">
                         <p className="text-center">Already have an account? Login <Link to="/login">here</Link></p>
+                        <p><small>Copyright © {new Date().getFullYear()} DCFund Wallet</small></p>
                     </div>
                 </form>
             </div>

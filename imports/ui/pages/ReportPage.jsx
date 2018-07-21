@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
 import {HorizontalBar} from 'react-chartjs-2';
-import {NotificationManager} from 'react-notifications';
 import {withTracker} from 'meteor/react-meteor-data';
-import {Link} from 'react-router-dom';
 import {DotLoader} from 'react-spinners';
 import * as _ from 'lodash';
+
+import PieFundBalanceComp from '../components/PieFundBalanceComp';
+import HorBarBorrowComp from '../components/HorBarBorrowComp';
 
 class ReportPage extends Component {
     constructor(props) {
@@ -20,6 +21,10 @@ class ReportPage extends Component {
             depositReportData: null,
             fundTotal: 0
         };
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        return this.state !== nextState || this.props !== nextProps;
     }
 
     componentDidMount() {
@@ -78,6 +83,7 @@ class ReportPage extends Component {
 
     render() {
         const fundTotal = this.state.fundTotal;
+        let fundBalancePieData = [0,0];
         // Borrow Report Render
         const borrowReportData = this.state.borrowReportData;
         let borrowReportRender = [1].map(() => {
@@ -142,6 +148,8 @@ class ReportPage extends Component {
                 );
             });
 
+            fundBalancePieData = [sumBorrowAmount?sumBorrowAmount:0, fundTotal - sumBorrowAmount];
+
             borrowReportRender = [1].map(() => {
                 return (
                     <table key="1" className="table table-bordered table-responsive table-hover table-condensed">
@@ -161,50 +169,6 @@ class ReportPage extends Component {
                         </tbody>
                     </table>
                 )
-            });
-        }
-
-        // Borrow Chart Render
-        const borrowChartData = this.state.borrowChartData;
-        let borrowChartRender = [1].map(() => {
-            return (
-                <div key="1"/>
-            )
-        });
-        if (borrowChartData) {
-            const dataBorrow = {
-                labels: borrowChartData.key,
-                datasets: [
-                    {
-                        label: 'Borrowing (DCF)',
-                        backgroundColor: 'rgba(217,83,79,0.2)',
-                        borderColor: 'rgba(217,83,79,1)',
-                        borderWidth: 1,
-                        hoverBackgroundColor: 'rgba(217,83,79,0.4)',
-                        hoverBorderColor: 'rgba(217,83,79,1)',
-                        data: borrowChartData.value
-                    }
-                ]
-            };
-
-            const optionsBorrow = {
-                scales: {
-                    xAxes: [
-                        {
-                            ticks: {
-                                beginAtZero: true
-                            }
-                        }
-                    ]
-                }
-            };
-
-            borrowChartRender = [1].map(() => {
-                return (
-                    <HorizontalBar key="1"
-                                   data={dataBorrow}
-                                   options={optionsBorrow}/>
-                );
             });
         }
 
@@ -357,6 +321,41 @@ class ReportPage extends Component {
             });
         }
 
+        const carouselChart = [1].map(() => {
+            return (
+                <div key="1" id="carousel-example-generic" className="carousel slide" data-ride="carousel">
+                    <ol className="carousel-indicators">
+                        <li data-target="#carousel-example-generic" data-slide-to="0" className="active"/>
+                        <li data-target="#carousel-example-generic" data-slide-to="1"/>
+                    </ol>
+
+                    <div className="carousel-inner" role="listbox">
+                        <div key={1} className="item active">
+                            <PieFundBalanceComp chartData={fundBalancePieData}/>
+                            <div className="carousel-caption">
+                                <h4>Availability</h4>
+                            </div>
+                        </div>
+                        <div key={2} className="item">
+                            <HorBarBorrowComp chartData={this.state.borrowChartData}/>
+                            <div className="carousel-caption">
+                                <h4>Borrowing</h4>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a className="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+                        <span className="glyphicon glyphicon-chevron-left" aria-hidden="true"/>
+                        <span className="sr-only">Previous</span>
+                    </a>
+                    <a className="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+                        <span className="glyphicon glyphicon-chevron-right" aria-hidden="true"/>
+                        <span className="sr-only">Next</span>
+                    </a>
+                </div>
+            )
+        });
+
         return (
             <div>
                 <div className="container">
@@ -370,8 +369,9 @@ class ReportPage extends Component {
                             <h6><i>* 1 DCF = 1.000.000 VND</i></h6>
                         </div>
                     </div>
+
                     <div className="row">
-                        <div className="col-xs-12 col-sm-8 col-md-6">
+                        <div className="col-xs-12 col-sm-12 col-md-6">
                             {this.state.loadingReport ?
                                 <div className="loader-container">
                                     <DotLoader
@@ -381,7 +381,7 @@ class ReportPage extends Component {
                                     />
                                 </div> : borrowReportRender}
                         </div>
-                        <div className="col-xs-12 col-sm-8 col-md-6">
+                        <div className="col-xs-12 col-sm-12 col-md-6">
                             {this.state.loadingReport ?
                                 <div className="loader-container">
                                     <DotLoader
@@ -389,7 +389,7 @@ class ReportPage extends Component {
                                         color={'#86bc25'}
                                         loading={this.state.loadingReport}
                                     />
-                                </div> : borrowChartRender}
+                                </div> : carouselChart}
                         </div>
                     </div>
 

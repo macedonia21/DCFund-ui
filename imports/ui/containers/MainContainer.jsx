@@ -8,6 +8,7 @@ import BlockPage from '../pages/BlockPage';
 import BlockInfoPage from '../pages/BlockInfoPage';
 import AddressPage from '../pages/AddressPage';
 import TransactionPage from '../pages/TransactionPage';
+import RulesPage from '../pages/RulesPage';
 import PageNotFound from '../pages/PageNotFound';
 
 export default class MainContainer extends Component {
@@ -29,6 +30,7 @@ export default class MainContainer extends Component {
                 <Route path="/block/:blockHash" component={BlockInfoPage}/>
                 <Route path="/address/:address" component={AddressPage}/>
                 <Route path="/transaction/:transactionID" component={TransactionPage}/>
+                <Route path="/rule" component={RulesPage}/>
                 <Route component={PageNotFound}/>
             </Switch>
         );

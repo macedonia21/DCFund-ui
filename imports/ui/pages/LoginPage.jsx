@@ -29,7 +29,7 @@ export default class LoginPage extends Component {
         return (
             <div className="container">
                 <form id="login-form" className="form center-block form-signin" onSubmit={this.handleSubmit}>
-                    <h1 className="text-center">Login</h1>
+                    <h2 className="text-center">Login</h2>
                     <div className="form-group">
                         <input type="text" id="login-email" className="form-control input-lg"
                                placeholder="Username or Email" required/>
@@ -44,6 +44,8 @@ export default class LoginPage extends Component {
                     </div>
                     <div className="form-group text-center">
                         <p className="text-center">Don't have an account? Sign up <Link to="/signup">here</Link></p>
+                        <p className="text-center"><Link to="/forgot-password">Forgot your password?</Link></p>
+                        <p><small>Copyright © {new Date().getFullYear()} DCFund Wallet</small></p>
                     </div>
                 </form>
             </div>

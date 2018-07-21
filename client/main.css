@@ -59,6 +59,35 @@ main {
     background-color: transparent;
 }
 
+/* MODAL */
+.modal-backdrop.in { z-index: 1031;}
+.modal-body {
+    overflow-y: scroll;
+    height: 80vh;
+}
+.display-block {
+    display: block !important;
+}
+.display-none {
+    display: none !important;
+}
+/* CAROUSEL */
+.carousel-control {
+    background-image: none !important;
+    color: #333333 !important;
+    text-shadow: none;
+}
+.carousel-indicators li {
+    border-color: #333333 !important;
+}
+.carousel-indicators .active {
+    background-color: #333333 !important;
+}
+.carousel-caption {
+    color: #333333;
+    text-shadow: none;
+}
+
 .input-right {
     text-align: right;
 }

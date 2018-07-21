@@ -8,7 +8,8 @@ import AppContainer from '../../ui/containers/AppContainer'
 // pages
 import SignupPage from '../../ui/pages/SignupPage'
 import LoginPage from '../../ui/pages/LoginPage'
-
+import ForgotPasswordPage from '../../ui/pages/ForgotPasswordPage'
+import ResetPasswordPage from '../../ui/pages/ResetPasswordPage'
 
 export const renderRoutes = () => (
     <Router>
@@ -16,6 +17,8 @@ export const renderRoutes = () => (
             <Switch>
                 <Route path="/login" component={LoginPage}/>
                 <Route path="/signup" component={SignupPage}/>
+                <Route path="/forgot-password" component={ForgotPasswordPage}/>
+                <Route path="/reset-password/:token" component={ResetPasswordPage}/>
                 <Route component={AppContainer}/>
             </Switch>
             <NotificationContainer/>

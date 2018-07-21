@@ -1,4 +1,5 @@
 import {Meteor} from 'meteor/meteor';
+import {Accounts} from 'meteor/accounts-base';
 import '../imports/api/blockchain.jsx';
 import './accounts-config';
 
@@ -32,4 +33,27 @@ Meteor.startup(() => {
             Roles.addUsersToRoles(fundId, ['approver']);
         }
     }
+
+    // Accounts setting
+    Accounts.emailTemplates.from = "noreply@dcfund.app";
+    Accounts.emailTemplates.resetPassword = {
+        subject(user) {
+            return "[DCFund] Reset password";
+        },
+        text(user, url) {
+            return `Hello,
+            
+You or someone has request password reset for your DCFund Wallet.
+
+If you need password reset, please click the link ${url}
+
+If you didn't request this email, please ignore it.
+
+Thank you.`
+        },
+        html(user, url) {}
+    };
+    Accounts.urls.resetPassword = function (token) {
+        return Meteor.absoluteUrl('reset-password/' + token);
+    };
 });

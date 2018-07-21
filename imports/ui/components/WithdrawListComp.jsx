@@ -297,14 +297,14 @@ class WithdrawListComp extends Component {
                 return (
                     <div key="1">
                         <div className="form-group">
-                            <label className="col-xs-3 control-label text-left">Full Name</label>
-                            <label className="col-xs-3 control-label">Keep</label>
+                            <label className="col-xs-4 control-label text-left">Full Name</label>
+                            <label className="col-xs-2 control-label">Keep</label>
                             <label className="col-xs-3 control-label">Withdraw</label>
                             <div className="col-xs-3"/>
                         </div>
                         <div className="form-group">
-                            <div className="col-xs-3"/>
-                            <div className="col-xs-3">
+                            <div className="col-xs-4"/>
+                            <div className="col-xs-2">
                                 <input className="form-control input-right"
                                        type="number"
                                        ref="withdrawRemainHeaderInput"
@@ -332,7 +332,7 @@ class WithdrawListComp extends Component {
                                             this.onWithdrawAll();
                                         }}>
                                     <span className="glyphicon glyphicon-ok" aria-hidden="true"/>&nbsp;
-                                    Withdraw all
+                                    <small>Withdraw all</small>
                                 </button>
                             </div>
                         </div>
@@ -343,8 +343,10 @@ class WithdrawListComp extends Component {
             withdrawRender = depositData.map((wallet, idx) => {
                 return (
                     <div key={wallet.wallet} className="form-group">
-                        <label className="col-xs-3 control-label">{wallet.walletOwner}</label>
-                        <div className="col-xs-3">
+                        <label className="col-xs-4 control-label"><small>
+                            {wallet.walletOwner}
+                        </small></label>
+                        <div className="col-xs-2">
                             <input className="form-control input-right"
                                    type="number"
                                    id={'withdrawRemainInput' + wallet.wallet}

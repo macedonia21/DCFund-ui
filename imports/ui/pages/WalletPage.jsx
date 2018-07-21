@@ -6,6 +6,8 @@ import NewRequestComp from '../components/NewRequestComp';
 import ApproveRequestComp from '../components/ApproveRequestComp';
 import SendMailComp from '../components/SendMailComp';
 
+import ModalComp from '../components/ModalComp';
+
 class WalletPage extends Component {
     constructor(props) {
         super(props);
@@ -19,7 +21,10 @@ class WalletPage extends Component {
 
             // Data
             balance: {},
-            allBalances: []
+            allBalances: [],
+
+            // Modal
+            classShowHideHelp: 'modal fade bs-example-modal-lg display-none'
         };
 
         this.forceRefresh = this.forceRefresh.bind(this);
@@ -61,6 +66,14 @@ class WalletPage extends Component {
         });
     }
 
+    handleCloseHelp() {
+        this.setState({classShowHideHelp: 'modal fade bs-example-modal-lg display-none'});
+    }
+
+    handleShowHelp() {
+        this.setState({classShowHideHelp: 'modal fade bs-example-modal-lg in display-block'});
+    }
+
     render() {
         let currentUser = this.props.currentUser;
         let isAdmin = Roles.userIsInRole(currentUser, 'administrator');
@@ -73,7 +86,15 @@ class WalletPage extends Component {
 
                 <div className="container">
                     <header>
-                        <h1>Wallet</h1>
+                        <h1>Wallet&nbsp;
+                            <small>
+                            <span className="glyphicon glyphicon-question-sign"
+                                  onClick={() => {
+                                      this.handleShowHelp();
+                                  }}
+                                  aria-hidden="true"/>
+                            </small>
+                        </h1>
                     </header>
 
                     <div className="row">
@@ -96,6 +117,10 @@ class WalletPage extends Component {
                                 <SendMailComp/> : ''}
                         </div>
                     </div>
+
+                    <ModalComp classShowHideHelp={this.state.classShowHideHelp} handleClose={() => {
+                        this.handleCloseHelp()
+                    }}/>
                 </div>
             </div>
         );

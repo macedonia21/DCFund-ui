@@ -15,7 +15,7 @@ export default class HorBarBorrowComp extends Component {
             labels: this.props.chartData.key,
             datasets: [
                 {
-                    label: 'Borrowing (DCF)',
+                    label: 'Borrowing',
                     backgroundColor: 'rgba(217,83,79,0.5)',
                     borderColor: 'rgba(217,83,79,1)',
                     borderWidth: 1,

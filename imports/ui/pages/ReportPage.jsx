@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
-import {HorizontalBar} from 'react-chartjs-2';
 import {withTracker} from 'meteor/react-meteor-data';
 import {DotLoader} from 'react-spinners';
 import * as _ from 'lodash';
 
 import PieFundBalanceComp from '../components/PieFundBalanceComp';
 import HorBarBorrowComp from '../components/HorBarBorrowComp';
+import VerBarReqTypeComp from '../components/VerBarReqTypeComp';
 
 class ReportPage extends Component {
     constructor(props) {
@@ -19,6 +19,7 @@ class ReportPage extends Component {
             borrowReportData: null,
             borrowChartData: null,
             depositReportData: null,
+            requestChartData: null,
             fundTotal: 0
         };
     }
@@ -55,7 +56,10 @@ class ReportPage extends Component {
                 }
                 if (res.depositReportData) {
                     this.setState({depositReportData: res.depositReportData});
-
+                }
+                if (res.requestChartData) {
+                    console.log(res.requestChartData);
+                    this.setState({requestChartData: res.requestChartData});
                 }
                 if (res.fundTotal) {
                     this.setState({fundTotal: res.fundTotal});
@@ -83,7 +87,7 @@ class ReportPage extends Component {
 
     render() {
         const fundTotal = this.state.fundTotal;
-        let fundBalancePieData = [0,0];
+        let fundBalancePieData = [0, 0];
         // Borrow Report Render
         const borrowReportData = this.state.borrowReportData;
         let borrowReportRender = [1].map(() => {
@@ -148,7 +152,7 @@ class ReportPage extends Component {
                 );
             });
 
-            fundBalancePieData = [sumBorrowAmount?sumBorrowAmount:0, fundTotal - sumBorrowAmount];
+            fundBalancePieData = [sumBorrowAmount ? sumBorrowAmount : 0, fundTotal - sumBorrowAmount];
 
             borrowReportRender = [1].map(() => {
                 return (
@@ -183,6 +187,10 @@ class ReportPage extends Component {
             if (month < 1) {
                 month = 12 + month;
                 year--;
+            }
+            if (month > 12) {
+                month = month - 12;
+                year++;
             }
             const header = month + '.' + year;
             depositTableHeader.push(header);
@@ -321,34 +329,94 @@ class ReportPage extends Component {
             });
         }
 
+        // Request Chart data
+        const requestChartHeader = [];
+        for (let i = -6; i <= 0; i++) {
+            let year = currentYear;
+            let month = currentMonth + i;
+            if (month < 1) {
+                month = 12 + month;
+                year--;
+            }
+            if (month > 12) {
+                month = month - 12;
+                year++;
+            }
+            const header = month + '.' + year;
+            requestChartHeader.push(header);
+        }
+        const requestChartData = this.state.requestChartData;
+        let requestChartDisplayData = {
+            "header": requestChartHeader,
+            "deposit": [0, 0, 0, 0, 0, 0, 0],
+            "withdraw": [0, 0, 0, 0, 0, 0, 0],
+            "borrow": [0, 0, 0, 0, 0, 0, 0],
+            "pay": [0, 0, 0, 0, 0, 0, 0]
+        };
+        if (requestChartData) {
+            if (requestChartData["0"]) {
+                requestChartDisplayData.deposit = _.map(requestChartHeader, (month) => {
+                    const amount = requestChartData["0"][month];
+                    return amount ? amount : 0;
+                });
+            }
+            if (requestChartData["1"]) {
+                requestChartDisplayData.deposit = _.map(requestChartHeader, (month) => {
+                    const amount = requestChartData["1"][month];
+                    return amount ? amount : 0;
+                });
+            }
+            if (requestChartData["2"]) {
+                requestChartDisplayData.borrow = _.map(requestChartHeader, (month) => {
+                    const amount = requestChartData["2"][month];
+                    return amount ? amount : 0;
+                });
+            }
+            if (requestChartData["3"]) {
+                requestChartDisplayData.deposit = _.map(requestChartHeader, (month) => {
+                    const amount = requestChartData["3"][month];
+                    return amount ? amount : 0;
+                });
+            }
+        }
+
         const carouselChart = [1].map(() => {
             return (
-                <div key="1" id="carousel-example-generic" className="carousel slide" data-ride="carousel">
+                <div key="1" id="carousel-example-generic" className="carousel slide carousel-report-chart" data-ride="carousel">
                     <ol className="carousel-indicators">
                         <li data-target="#carousel-example-generic" data-slide-to="0" className="active"/>
                         <li data-target="#carousel-example-generic" data-slide-to="1"/>
+                        <li data-target="#carousel-example-generic" data-slide-to="2"/>
                     </ol>
 
                     <div className="carousel-inner" role="listbox">
                         <div key={1} className="item active">
-                            <PieFundBalanceComp chartData={fundBalancePieData}/>
-                            <div className="carousel-caption">
-                                <h4>Availability</h4>
-                            </div>
-                        </div>
-                        <div key={2} className="item">
                             <HorBarBorrowComp chartData={this.state.borrowChartData}/>
                             <div className="carousel-caption">
                                 <h4>Borrowing</h4>
                             </div>
                         </div>
+                        <div key={2} className="item">
+                            <PieFundBalanceComp chartData={fundBalancePieData}/>
+                            <div className="carousel-caption">
+                                <h4>Availability</h4>
+                            </div>
+                        </div>
+                        <div key={3} className="item">
+                            <VerBarReqTypeComp chartData={requestChartDisplayData}/>
+                            <div className="carousel-caption">
+                                <h4>Request</h4>
+                            </div>
+                        </div>
                     </div>
 
-                    <a className="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+                    <a className="left carousel-control" href="#carousel-example-generic" role="button"
+                       data-slide="prev">
                         <span className="glyphicon glyphicon-chevron-left" aria-hidden="true"/>
                         <span className="sr-only">Previous</span>
                     </a>
-                    <a className="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+                    <a className="right carousel-control" href="#carousel-example-generic" role="button"
+                       data-slide="next">
                         <span className="glyphicon glyphicon-chevron-right" aria-hidden="true"/>
                         <span className="sr-only">Next</span>
                     </a>

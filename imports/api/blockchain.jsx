@@ -489,6 +489,7 @@ if (Meteor.isServer) {
                             borrowReportData: null,
                             borrowChartData: null,
                             depositReportData: null,
+                            requestChartData: null,
                             fundTotal: 0,
                         };
                         const blockData = _.filter(result.data.slice(1), (block) => {
@@ -590,6 +591,25 @@ if (Meteor.isServer) {
                                 return value.walletDepositTotal = walletBalance.deposit;
                             });
                         }
+
+                        // Request Type chart
+                        const requestStep1 = _.map(blockData, (block) => {
+                            const txDCF = block.data[0].txDCFs[0];
+                            return {
+                                "amount": txDCF.amount,
+                                "type": txDCF.type,
+                                "month": txDCF.month + '.' + txDCF.year
+                            }
+                        });
+                        const requestStep2 = _.groupBy(requestStep1, 'type');
+                        const requestStep3 =_.mapValues(requestStep2, (value) => {
+                            const allAmountByType =  _.groupBy(value, 'month');
+                            const amountByType = _.mapValues(allAmountByType, (value) => {
+                                return _.reduce(value, (sum, n) => {return sum + n.amount}, 0);
+                            });
+                            return amountByType;
+                        });
+                        reportData.requestChartData = requestStep3;
 
                         return reportData;
                     } else {

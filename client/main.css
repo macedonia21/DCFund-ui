@@ -72,18 +72,19 @@ main {
     display: none !important;
 }
 /* CAROUSEL */
-.carousel-control {
+.carousel-report-chart .carousel-control {
     background-image: none !important;
     color: #333333 !important;
     text-shadow: none;
+    width: 4%;
 }
-.carousel-indicators li {
+.carousel-report-chart .carousel-indicators li {
     border-color: #333333 !important;
 }
-.carousel-indicators .active {
+.carousel-report-chart .carousel-indicators .active {
     background-color: #333333 !important;
 }
-.carousel-caption {
+.carousel-report-chart .carousel-caption {
     color: #333333;
     text-shadow: none;
 }

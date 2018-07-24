@@ -361,7 +361,7 @@ class ReportPage extends Component {
                 });
             }
             if (requestChartData["1"]) {
-                requestChartDisplayData.deposit = _.map(requestChartHeader, (month) => {
+                requestChartDisplayData.withdraw = _.map(requestChartHeader, (month) => {
                     const amount = requestChartData["1"][month];
                     return amount ? amount : 0;
                 });
@@ -373,7 +373,7 @@ class ReportPage extends Component {
                 });
             }
             if (requestChartData["3"]) {
-                requestChartDisplayData.deposit = _.map(requestChartHeader, (month) => {
+                requestChartDisplayData.pay = _.map(requestChartHeader, (month) => {
                     const amount = requestChartData["3"][month];
                     return amount ? amount : 0;
                 });

@@ -180,7 +180,11 @@ class NewRequestComp extends Component {
         let isApprover = Roles.userIsInRole(currentUser, 'approver');
         let isSuperUser = Roles.userIsInRole(currentUser, 'superuser');
         let isUser = Roles.userIsInRole(currentUser, 'user');
+        let currentDate = new Date().getDate();
         let currentMonth = new Date().getMonth();
+        if (currentDate >= 27) {
+            currentMonth++;
+        }
         let currentYear = new Date().getFullYear();
 
         let pendTransPool = this.props.pendingRequests;

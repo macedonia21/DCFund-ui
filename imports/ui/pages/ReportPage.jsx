@@ -178,6 +178,7 @@ class ReportPage extends Component {
 
         // Deposit Report Render
         const currentDate = new Date();
+        const currentDay = currentDate.getDate();
         const currentMonth = currentDate.getMonth() + 1;
         const currentYear = currentDate.getFullYear();
         const depositTableHeader = [];
@@ -331,7 +332,13 @@ class ReportPage extends Component {
 
         // Request Chart data
         const requestChartHeader = [];
-        for (let i = -6; i <= 0; i++) {
+        let fromMonth = -6;
+        let toMonth = 0;
+        if (currentDay >= 27) {
+            fromMonth = -5;
+            toMonth = 1;
+        }
+        for (let i = fromMonth; i <= toMonth; i++) {
             let year = currentYear;
             let month = currentMonth + i;
             if (month < 1) {

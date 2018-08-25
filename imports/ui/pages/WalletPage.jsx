@@ -4,7 +4,7 @@ import {withTracker} from 'meteor/react-meteor-data';
 import WalletInfoComp from '../components/WalletInfoComp';
 import NewRequestComp from '../components/NewRequestComp';
 import ApproveRequestComp from '../components/ApproveRequestComp';
-import SendMailComp from '../components/SendMailComp';
+import AdminBoardComp from '../components/AdminBoardComp';
 
 import ModalComp from '../components/ModalComp';
 
@@ -114,7 +114,7 @@ class WalletPage extends Component {
                                     refresh={this.forceRefresh}/> : ''}
 
                             {isAdmin ?
-                                <SendMailComp/> : ''}
+                                <AdminBoardComp/> : ''}
                         </div>
                     </div>
 

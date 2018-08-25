@@ -522,7 +522,7 @@ if (Meteor.isServer) {
                             const borrowStep4 = _.mapValues(borrowStep3, (wallet) => {
                                 const lastBorrowDate = new Date(_.last(wallet).timestamp);
                                 let dueDate = new Date(lastBorrowDate.getFullYear(), lastBorrowDate.getMonth() + 1, 0);
-                                if (lastBorrowDate.getDate() > 20) {
+                                if (lastBorrowDate.getDate() >= 20) {
                                     dueDate = new Date(lastBorrowDate.getFullYear(), lastBorrowDate.getMonth() + 2, 0);
                                 }
 
@@ -602,10 +602,12 @@ if (Meteor.isServer) {
                             }
                         });
                         const requestStep2 = _.groupBy(requestStep1, 'type');
-                        const requestStep3 =_.mapValues(requestStep2, (value) => {
-                            const allAmountByType =  _.groupBy(value, 'month');
+                        const requestStep3 = _.mapValues(requestStep2, (value) => {
+                            const allAmountByType = _.groupBy(value, 'month');
                             const amountByType = _.mapValues(allAmountByType, (value) => {
-                                return _.reduce(value, (sum, n) => {return sum + n.amount}, 0);
+                                return _.reduce(value, (sum, n) => {
+                                    return sum + n.amount
+                                }, 0);
                             });
                             return amountByType;
                         });
@@ -776,6 +778,29 @@ if (Meteor.isServer) {
                 "html": "dummy",
                 "headers": headers
             });
+        },
+
+        'admin.getUserRole'() {
+            if (!Meteor.userId) {
+                throw new Meteor.Error('not-authorized');
+            }
+
+            if (!Roles.userIsInRole(Meteor.user(), 'administrator')) {
+                throw new Meteor.Error('not-authorized');
+            }
+
+            try {
+                const users = Meteor.users.find({
+                    _id: {$ne: Meteor.user()._id}
+                }, {fields: {
+                    'profile.fullName': 1,
+                    'emails': 1,
+                    'roles': 1
+                }}).fetch();
+                return users;
+            } catch (e) {
+                throw new Meteor.Error(e, e.reason, e.details);
+            }
         },
     });
 }

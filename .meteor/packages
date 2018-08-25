@@ -18,13 +18,14 @@ es5-shim@4.8.0                # ECMAScript 5 compatibility for older browsers.
 ecmascript@0.11.1              # Enable ECMAScript2015+ syntax in app code
 
 insecure@1.0.7                # Allow all DB writes from clients (for prototyping)
-accounts-password
+accounts-password@1.5.1
 react-meteor-data
 shell-server@0.3.1
-dynamic-import@0.4.0
+dynamic-import@0.4.2
 less@2.7.12
 nemo64:bootstrap@=3.3.5_2
 alanning:roles
 http@1.4.1
 email@1.2.3
 msavin:mongol
+force-ssl

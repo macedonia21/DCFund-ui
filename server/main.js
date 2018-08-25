@@ -10,21 +10,21 @@ Meteor.startup(() => {
         // Create Admin account
         const adminId = Accounts.createUser({
             username: 'admin',
-            email: 'htuan@deloitte.com',
-            password: '@nhTuan2211',
+            email: 'htuan@example.com',
+            password: '**********',
             firstName: 'Tuan',
             lastName: 'Hoang'
         });
 
         if (adminId) {
-            Roles.addUsersToRoles(adminId, ['administrator', 'approver', 'user']);
+            Roles.addUsersToRoles(adminId, ['administrator']);
         }
 
         // Create Fund account
         const fundId = Accounts.createUser({
             username: 'dcfund',
-            email: 'tta@deloitte.com',
-            password: 'DCF1234',
+            email: 'tta@example.com',
+            password: '**********',
             firstName: 'Hung',
             lastName: 'Ta'
         });

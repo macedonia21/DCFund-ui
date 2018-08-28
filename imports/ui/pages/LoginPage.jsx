@@ -1,7 +1,8 @@
-import React, {Component} from 'react'
+import React, {Component} from 'react';
 import {NotificationManager} from 'react-notifications';
-import {withHistory, Link} from 'react-router-dom'
-import {createContainer} from 'meteor/react-meteor-data'
+import {withHistory, Link} from 'react-router-dom';
+import {createContainer} from 'meteor/react-meteor-data';
+import Particles from 'react-particles-js';
 
 export default class LoginPage extends Component {
     constructor(props) {
@@ -45,9 +46,47 @@ export default class LoginPage extends Component {
                     <div className="form-group text-center">
                         <p className="text-center">Don't have an account? Sign up <Link to="/signup">here</Link></p>
                         <p className="text-center"><Link to="/forgot-password">Forgot your password?</Link></p>
-                        <p><small>Copyright © {new Date().getFullYear()} DCFund Wallet</small></p>
+                        <p>
+                            <small>Copyright © {new Date().getFullYear()} DCFund Wallet</small>
+                        </p>
                     </div>
                 </form>
+                <Particles className="particles-js" canvasClassName="particles-js-canvas-el"
+                    params={{
+                        particles: {
+                            number: {
+                                value: 80,
+                                density: {
+                                    enable: true,
+                                    value_area: 800
+                                }
+                            },
+                            color: {
+                                value: "#86bc25"
+                            },
+                            size: {
+                                value: 3,
+                                random: true
+                            },
+                            opacity: {
+                                value: 1
+                            },
+                            line_linked: {
+                                distance: 150,
+                                color: "#86bc25",
+                                opacity: 0.8,
+                                width: 1
+                            },
+                            move: {
+                                speed: 8
+                            }
+                        }
+                    }}
+                    style={{
+                        width: '100%',
+                        height: '100%'
+                    }}
+                />
             </div>
         );
     }

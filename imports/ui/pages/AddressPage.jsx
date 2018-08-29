@@ -76,7 +76,7 @@ class AddressPage extends Component {
                             <div>
                                 <span>{txDCF.walletOwner}</span> {txDCF.type === 0 ?
                                 'deposit' : (txDCF.type === 1 ? 'withdraw' :
-                                txDCF.type === 2 ? 'borrow' : 'pay')}s at {this.formatDate(txDCF.timestamp)}
+                                    txDCF.type === 2 ? 'borrow' : 'pay')}s at {this.formatDate(txDCF.timestamp)}
                             </div>
                             <div>
                                 <small>for period {txDCF.month}.{txDCF.year}</small>
@@ -91,11 +91,13 @@ class AddressPage extends Component {
                             <div className="col-xs-1">
                                 <small>Hash</small>
                             </div>
-                            <div className="col-xs-2">
+                            <div className="col-xs-11">
                                 <small>
-                                    <Link to={`/transaction/${transaction.id}`}>
-                                        {transaction.id}
-                                    </Link>
+                                    <div className="overflow-text">
+                                        <Link to={`/transaction/${transaction.id}`}>
+                                            {transaction.id}
+                                        </Link>
+                                    </div>
                                 </small>
                             </div>
                         </div>
@@ -109,11 +111,11 @@ class AddressPage extends Component {
                                     {transaction.isApproved ?
                                         <span className="label label-success">
                                             <span className="glyphicon glyphicon-ok" aria-hidden="true">
-                                            </span> Approved
+                                            </span><span className="hidden-xs">&nbsp;Approved</span>
                                         </span> :
                                         <span className="label label-danger">
                                             <span className="glyphicon glyphicon-remove" aria-hidden="true">
-                                            </span> Rejected
+                                            </span><span className="hidden-xs">&nbsp;Rejected</span>
                                         </span>}
                                 </div>
                             </div>
@@ -139,7 +141,7 @@ class AddressPage extends Component {
 
                     {this.state.loading ? '' :
                         <div className='container-fluid'>
-                            <h5>{this.props.match.params.address}</h5>
+                            <h5 className="overflow-text">{this.props.match.params.address}</h5>
                             <ul className="list-group">
                                 {transactionsRender}
                             </ul>

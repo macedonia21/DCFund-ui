@@ -4,7 +4,7 @@ import {withTracker} from 'meteor/react-meteor-data';
 import {Link} from 'react-router-dom';
 import {DotLoader} from 'react-spinners';
 
-import { Requests } from '../../api/blockchain';
+import {Requests} from '../../api/blockchain';
 
 import WithdrawListComp from '../components/WithdrawListComp';
 
@@ -164,9 +164,11 @@ class ApproveRequestComp extends Component {
                             </div>
                             <div>
                                 <small>from&nbsp;
-                                    <Link to={`/address/${txDCF.wallet}`}>
-                                        {txDCF.wallet}
-                                    </Link>
+                                    <div className="overflow-text">
+                                        <Link to={`/address/${txDCF.wallet}`}>
+                                            {txDCF.wallet}
+                                        </Link>
+                                    </div>
                                 </small>
                             </div>
                             <div>
@@ -198,13 +200,15 @@ class ApproveRequestComp extends Component {
                                             onClick={() => {
                                                 this.confirmTrans(transaction, true)
                                             }}>
-                                        <span className="glyphicon glyphicon-ok" aria-hidden="true"/> Approve
+                                        <span className="glyphicon glyphicon-ok" aria-hidden="true"/>
+                                        <span className="hidden-xs">&nbsp;Approve</span>
                                     </button>
                                     <button type="button" className="btn btn-default btn-danger"
                                             onClick={() => {
                                                 this.confirmTrans(transaction, false)
                                             }}>
-                                        <span className="glyphicon glyphicon-remove" aria-hidden="true"/> Reject
+                                        <span className="glyphicon glyphicon-remove" aria-hidden="true"/>
+                                        <span className="hidden-xs">&nbsp;Reject</span>
                                     </button>
                                 </div>
                             </div>

@@ -43,9 +43,11 @@ class BlockPage extends Component {
                 return (
                     <li key={block.hash} className="list-group-item">
                         <span className="badge">{block.index}</span>
-                        <Link to={`/block/${block.hash}`}>
-                            {block.hash}
-                        </Link>
+                        <div className="overflow-text">
+                            <Link to={`/block/${block.hash}`}>
+                                {block.hash}
+                            </Link>
+                        </div>
                     </li>
                 );
             });

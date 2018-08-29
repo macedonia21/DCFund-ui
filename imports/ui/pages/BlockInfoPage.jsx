@@ -75,15 +75,17 @@ class BlockInfoPage extends Component {
                             </div>
                             <div>
                                 <small>from&nbsp;
-                                    <Link to={`/address/${txDCF.wallet}`}>
-                                        {txDCF.wallet}
-                                    </Link>
+                                    <div className="overflow-text">
+                                        <Link to={`/address/${txDCF.wallet}`}>
+                                            {txDCF.wallet}
+                                        </Link>
+                                    </div>
                                 </small>
                             </div>
                             <div>
                                 <span>{txDCF.walletOwner}</span> {txDCF.type === 0 ?
                                 'deposit' : (txDCF.type === 1 ? 'withdraw' :
-                                txDCF.type === 2 ? 'borrow' : 'pay')}s at {this.formatDate(txDCF.timestamp)}
+                                    txDCF.type === 2 ? 'borrow' : 'pay')}s at {this.formatDate(txDCF.timestamp)}
                             </div>
                             <div>
                                 <small>for period {txDCF.month}.{txDCF.year}</small>
@@ -98,11 +100,13 @@ class BlockInfoPage extends Component {
                             <div className="col-xs-1">
                                 <small>Hash</small>
                             </div>
-                            <div className="col-xs-2">
+                            <div className="col-xs-11">
                                 <small>
-                                    <Link to={`/transaction/${transaction.id}`}>
-                                        {transaction.id}
-                                    </Link>
+                                    <div className="overflow-text">
+                                        <Link to={`/transaction/${transaction.id}`}>
+                                            {transaction.id}
+                                        </Link>
+                                    </div>
                                 </small>
                             </div>
                         </div>
@@ -116,11 +120,11 @@ class BlockInfoPage extends Component {
                                     {transaction.isApproved ?
                                         <span className="label label-success">
                                             <span className="glyphicon glyphicon-ok" aria-hidden="true">
-                                            </span> Approved
+                                            </span><span className="hidden-xs">&nbsp;Approved</span>
                                         </span> :
                                         <span className="label label-danger">
                                             <span className="glyphicon glyphicon-remove" aria-hidden="true">
-                                            </span> Rejected
+                                            </span><span className="hidden-xs">&nbsp;Rejected</span>
                                         </span>}
                                 </div>
                             </div>
@@ -155,7 +159,7 @@ class BlockInfoPage extends Component {
                                 :
                                 <div>
                                     <div className='container-fluid'>
-                                        <h5>{this.props.match.params.blockHash}</h5>
+                                        <h5 className="overflow-text">{this.props.match.params.blockHash}</h5>
                                         <ul className="list-group">
                                             <li key='1' className="list-group-item">
                                                 <div className="row">
@@ -164,7 +168,7 @@ class BlockInfoPage extends Component {
                                                 </div>
                                                 <div className="row">
                                                     <div className="hidden-xs col-sm-2">Pre.Hash</div>
-                                                    <div className="col-xs-12 col-sm-10">
+                                                    <div className="col-xs-12 col-sm-10 overflow-text">
                                                         <Link to={`/block/${block.previousHash}`}>
                                                             {block.previousHash}
                                                         </Link>

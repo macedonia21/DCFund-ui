@@ -108,6 +108,9 @@ export default class SignupPage extends Component {
     render() {
         const passStrength = this.state.passStrength;
         const passConfirmStrength = this.state.passConfirmStrength;
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        const particleCount = Math.round((width * height) / 10000) + 10;
         return (
             <div className="container">
                 <form id="login-form" className="form center-block form-signup" onSubmit={this.handleSubmit}>
@@ -164,10 +167,10 @@ export default class SignupPage extends Component {
                     params={{
                         particles: {
                             number: {
-                                value: 80,
+                                value: particleCount,
                                 density: {
                                     enable: true,
-                                    value_area: 800
+                                    value_area: 600
                                 }
                             },
                             color: {

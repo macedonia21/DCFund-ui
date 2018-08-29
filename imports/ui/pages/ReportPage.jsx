@@ -58,7 +58,6 @@ class ReportPage extends Component {
                     this.setState({depositReportData: res.depositReportData});
                 }
                 if (res.requestChartData) {
-                    console.log(res.requestChartData);
                     this.setState({requestChartData: res.requestChartData});
                 }
                 if (res.fundTotal) {
@@ -108,10 +107,10 @@ class ReportPage extends Component {
 
                 return (
                     <tr key={wallet}>
-                        <th>{wallet}</th>
-                        <td>{walletBorrowData.borrowAmount}</td>
-                        <td>{this.formatDate(walletBorrowData.borrowTimestamp)}</td>
-                        <td className="danger">{this.formatDate(walletBorrowData.dueTimestamp)}</td>
+                        <th className="col-sm-3 col-xs-5">{wallet}</th>
+                        <td className="col-sm-3 col-xs-3">{walletBorrowData.borrowAmount}</td>
+                        <td className="col-sm-3 hidden-xs">{this.formatDate(walletBorrowData.borrowTimestamp)}</td>
+                        <td className="danger col-sm-3 col-xs-4">{this.formatDate(walletBorrowData.dueTimestamp)}</td>
                     </tr>
                 );
             });
@@ -122,7 +121,7 @@ class ReportPage extends Component {
                 }
                 return (
                     <tr key="1">
-                        <th>Out - Total</th>
+                        <th className="col-sm-3 col-xs-5">Out - Total</th>
                         <td className="warning" colSpan={3}>{sumBorrowAmount}</td>
                     </tr>
                 );
@@ -134,7 +133,7 @@ class ReportPage extends Component {
                 }
                 return (
                     <tr key="1">
-                        <th>Balance</th>
+                        <th className="col-sm-3 col-xs-5">Balance</th>
                         <td className="info" colSpan={3}>{fundTotal - sumBorrowAmount}</td>
                     </tr>
                 );
@@ -146,7 +145,7 @@ class ReportPage extends Component {
                 }
                 return (
                     <tr key="1">
-                        <th>DC Fund - Total</th>
+                        <th className="col-sm-3 col-xs-5">DC Fund - Total</th>
                         <td className="success" colSpan={3}>{fundTotal}</td>
                     </tr>
                 );
@@ -159,10 +158,10 @@ class ReportPage extends Component {
                     <table key="1" className="table table-bordered table-responsive table-hover table-condensed">
                         <thead>
                         <tr>
-                            <th>Full Name</th>
-                            <th>Amount</th>
-                            <th>Borrowed Date</th>
-                            <th className="danger">To-be Refund Date</th>
+                            <th className="col-sm-3 col-xs-5">Full Name</th>
+                            <th className="col-sm-3 col-xs-3">Amount</th>
+                            <th className="col-sm-3 hidden-xs">Borrowed Date</th>
+                            <th className="danger col-sm-3 col-xs-4">To-be Refund Date</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -182,7 +181,13 @@ class ReportPage extends Component {
         const currentMonth = currentDate.getMonth() + 1;
         const currentYear = currentDate.getFullYear();
         const depositTableHeader = [];
-        for (let i = -3; i <= 3; i++) {
+        let fromMonth = -3;
+        let toMonth = 3;
+        if (currentDay >= 27) {
+            fromMonth = -2;
+            toMonth = 4;
+        }
+        for (let i = fromMonth; i <= toMonth; i++) {
             let year = currentYear;
             let month = currentMonth + i;
             if (month < 1) {
@@ -252,15 +257,15 @@ class ReportPage extends Component {
 
                 return (
                     <tr key={wallet}>
-                        <th>{walletDepositData.walletOwner}</th>
-                        <td className="warning">{walletDepositTotal}</td>
-                        <td className={walletDepositCol1 > 0 ? 'success' : 'td-amount-zero'}>{walletDepositCol1}</td>
-                        <td className={walletDepositCol2 > 0 ? 'success' : 'td-amount-zero'}>{walletDepositCol2}</td>
-                        <td className={walletDepositCol3 > 0 ? 'success' : 'td-amount-zero'}>{walletDepositCol3}</td>
-                        <td className="info">{walletDepositCol4}</td>
-                        <td className={walletDepositCol5 > 0 ? 'success' : 'td-amount-zero'}>{walletDepositCol5}</td>
-                        <td className={walletDepositCol6 > 0 ? 'success' : 'td-amount-zero'}>{walletDepositCol6}</td>
-                        <td className={walletDepositCol7 > 0 ? 'success' : 'td-amount-zero'}>{walletDepositCol7}</td>
+                        <th className="col-sm-4 col-xs-6">{walletDepositData.walletOwner}</th>
+                        <td className="warning col-sm-1 col-xs-3">{walletDepositTotal}</td>
+                        <td className={walletDepositCol1 > 0 ? 'success col-sm-1 hidden-xs' : 'td-amount-zero col-sm-1 hidden-xs'}>{walletDepositCol1}</td>
+                        <td className={walletDepositCol2 > 0 ? 'success col-sm-1 hidden-xs' : 'td-amount-zero col-sm-1 hidden-xs'}>{walletDepositCol2}</td>
+                        <td className={walletDepositCol3 > 0 ? 'success col-sm-1 hidden-xs' : 'td-amount-zero col-sm-1 hidden-xs'}>{walletDepositCol3}</td>
+                        <td className="info col-sm-1 col-xs-3">{walletDepositCol4}</td>
+                        <td className={walletDepositCol5 > 0 ? 'success col-sm-1 hidden-xs' : 'td-amount-zero col-sm-1 hidden-xs'}>{walletDepositCol5}</td>
+                        <td className={walletDepositCol6 > 0 ? 'success col-sm-1 hidden-xs' : 'td-amount-zero col-sm-1 hidden-xs'}>{walletDepositCol6}</td>
+                        <td className={walletDepositCol7 > 0 ? 'success col-sm-1 hidden-xs' : 'td-amount-zero col-sm-1 hidden-xs'}>{walletDepositCol7}</td>
                     </tr>
                 );
             });
@@ -292,15 +297,15 @@ class ReportPage extends Component {
                 }
                 return (
                     <tr key="1">
-                        <th>DC Fund - Total</th>
-                        <td className="warning">{fundDepositTotal}</td>
-                        <td className="warning">{fundDepositCol1}</td>
-                        <td className="warning">{fundDepositCol2}</td>
-                        <td className="warning">{fundDepositCol3}</td>
-                        <td className="info">{fundDepositCol4}</td>
-                        <td className="warning">{fundDepositCol5}</td>
-                        <td className="warning">{fundDepositCol6}</td>
-                        <td className="warning">{fundDepositCol7}</td>
+                        <th className="col-sm-4 col-xs-6">DC Fund - Total</th>
+                        <td className="warning col-sm-1 col-xs-3">{fundDepositTotal}</td>
+                        <td className="warning col-sm-1 hidden-xs">{fundDepositCol1}</td>
+                        <td className="warning col-sm-1 hidden-xs">{fundDepositCol2}</td>
+                        <td className="warning col-sm-1 hidden-xs">{fundDepositCol3}</td>
+                        <td className="info col-sm-1 col-xs-3">{fundDepositCol4}</td>
+                        <td className="warning col-sm-1 hidden-xs">{fundDepositCol5}</td>
+                        <td className="warning col-sm-1 hidden-xs">{fundDepositCol6}</td>
+                        <td className="warning col-sm-1 hidden-xs">{fundDepositCol7}</td>
                     </tr>
                 );
             });
@@ -310,15 +315,15 @@ class ReportPage extends Component {
                     <table key="1" className="table table-bordered table-responsive table-hover">
                         <thead>
                         <tr>
-                            <th>Full Name</th>
-                            <th className="warning">Total</th>
-                            <th>{depositTableHeader[0]}</th>
-                            <th>{depositTableHeader[1]}</th>
-                            <th>{depositTableHeader[2]}</th>
-                            <th className="info">{depositTableHeader[3]}</th>
-                            <th>{depositTableHeader[4]}</th>
-                            <th>{depositTableHeader[5]}</th>
-                            <th>{depositTableHeader[6]}</th>
+                            <th className="col-sm-4 col-xs-6">Full Name</th>
+                            <th className="col-sm-1 col-xs-3">Total</th>
+                            <th className="col-sm-1 hidden-xs">{depositTableHeader[0]}</th>
+                            <th className="col-sm-1 hidden-xs">{depositTableHeader[1]}</th>
+                            <th className="col-sm-1 hidden-xs">{depositTableHeader[2]}</th>
+                            <th className="info col-sm-1 col-xs-3">{depositTableHeader[3]}</th>
+                            <th className="col-sm-1 hidden-xs">{depositTableHeader[4]}</th>
+                            <th className="col-sm-1 hidden-xs">{depositTableHeader[5]}</th>
+                            <th className="col-sm-1 hidden-xs">{depositTableHeader[6]}</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -332,8 +337,8 @@ class ReportPage extends Component {
 
         // Request Chart data
         const requestChartHeader = [];
-        let fromMonth = -6;
-        let toMonth = 0;
+        fromMonth = -6;
+        toMonth = 0;
         if (currentDay >= 27) {
             fromMonth = -5;
             toMonth = 1;
@@ -456,7 +461,7 @@ class ReportPage extends Component {
                                     />
                                 </div> : borrowReportRender}
                         </div>
-                        <div className="col-xs-12 col-sm-12 col-md-6">
+                        <div className="hidden-xs col-sm-12 col-md-6">
                             {this.state.loadingReport ?
                                 <div className="loader-container">
                                     <DotLoader

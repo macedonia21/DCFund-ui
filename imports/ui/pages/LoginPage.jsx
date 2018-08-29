@@ -27,6 +27,9 @@ export default class LoginPage extends Component {
     }
 
     render() {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        const particleCount = Math.round((width * height) / 10000) + 10;
         return (
             <div className="container">
                 <form id="login-form" className="form center-block form-signin" onSubmit={this.handleSubmit}>
@@ -55,10 +58,10 @@ export default class LoginPage extends Component {
                     params={{
                         particles: {
                             number: {
-                                value: 80,
+                                value: particleCount,
                                 density: {
                                     enable: true,
-                                    value_area: 800
+                                    value_area: 600
                                 }
                             },
                             color: {

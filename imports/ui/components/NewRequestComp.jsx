@@ -206,9 +206,11 @@ class NewRequestComp extends Component {
                             </div>
                             <div>
                                 <small>from&nbsp;
-                                    <Link to={`/address/${txDCF.wallet}`}>
-                                        {txDCF.wallet}
-                                    </Link>
+                                    <div className="overflow-text">
+                                        <Link to={`/address/${txDCF.wallet}`}>
+                                            {txDCF.wallet}
+                                        </Link>
+                                    </div>
                                 </small>
                             </div>
                             <div>
@@ -240,7 +242,8 @@ class NewRequestComp extends Component {
                                             onClick={() => {
                                                 this.removeTrans(transaction)
                                             }}>
-                                        <span className="glyphicon glyphicon-trash" aria-hidden="true"/> Remove
+                                        <span className="glyphicon glyphicon-trash" aria-hidden="true"/>
+                                        <span className="hidden-xs">&nbsp;Remove</span>
                                     </button>
                                 </div>
                             </div>

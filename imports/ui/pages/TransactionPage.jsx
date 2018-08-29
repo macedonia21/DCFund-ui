@@ -74,15 +74,17 @@ class TransactionPage extends Component {
                         </div>
                         <div>
                             <small>from&nbsp;
-                                <Link to={`/address/${txDCF.wallet}`}>
-                                    {txDCF.wallet}
-                                </Link>
+                                <div className="overflow-text">
+                                    <Link to={`/address/${txDCF.wallet}`}>
+                                        {txDCF.wallet}
+                                    </Link>
+                                </div>
                             </small>
                         </div>
                         <div>
                             <span>{txDCF.walletOwner}</span> {txDCF.type === 0 ?
                             'deposit' : (txDCF.type === 1 ? 'withdraw' :
-                            txDCF.type === 2 ? 'borrow' : 'pay')}s at {this.formatDate(txDCF.timestamp)}
+                                txDCF.type === 2 ? 'borrow' : 'pay')}s at {this.formatDate(txDCF.timestamp)}
                         </div>
                         <div>
                             <small>for period {txDCF.month}.{txDCF.year}</small>
@@ -117,7 +119,7 @@ class TransactionPage extends Component {
                                 :
                                 <div>
                                     <div className='container-fluid'>
-                                        <h5>{this.props.match.params.transactionID}</h5>
+                                        <h5 className="overflow-text">{this.props.match.params.transactionID}</h5>
                                         <ul className="list-group">
                                             <li key={transaction.id} className="list-group-item">
                                                 <div className="row">
@@ -131,12 +133,12 @@ class TransactionPage extends Component {
                                                                 <span className="label label-success">
                                                                     <span className="glyphicon glyphicon-ok"
                                                                           aria-hidden="true">
-                                                                    </span> Approved
+                                                                    </span><span className="hidden-xs">&nbsp;Approved</span>
                                                                 </span> :
                                                                 <span className="label label-danger">
                                                                     <span className="glyphicon glyphicon-remove"
                                                                           aria-hidden="true">
-                                                                    </span> Rejected
+                                                                    </span><span className="hidden-xs">&nbsp;Rejected</span>
                                                                 </span>}
                                                         </div>
                                                     </div>

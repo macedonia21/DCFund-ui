@@ -24,19 +24,12 @@ export default class AdminBoardComp extends Component {
         this.fetchUsers();
     }
 
-    // componentDidUpdate() {
-    //     if (this.state.loadingUsers) {
-    //         this.fetchUsers();
-    //     }
-    // }
-
     fetchUsers() {
         Meteor.call('admin.getUserRole', true, (err, res) => {
             if (err) {
                 this.setState({users: null});
             } else {
                 this.setState({users: res});
-                console.log(res);
             }
             this.setState({loadingUsers: false});
         });

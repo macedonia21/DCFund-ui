@@ -19,3 +19,6 @@ To-do lists
 * Withdraw feature - **Done**
 * Optimize React components
 * User management features
+* Deposit / Pay reminder every 28th
+* Add balance in email to user
+* Send email on to-be paid date

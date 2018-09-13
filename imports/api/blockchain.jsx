@@ -10,14 +10,20 @@ export const Requests = new Mongo.Collection('requests');
 
 smtpapi = require('smtpapi');
 
-const templateNewRequest = 'f8fe08b6-2a3c-4ed3-a2c4-7e4f92a2ac7b';
-const templateRequestApprove = '4c8eae2b-6a43-4f68-8683-36025dacd41e';
-const templateRequestReject = '476da337-a470-48cb-87c6-e99ed9994a1c';
-const templateWithdraw = 'f46635a1-ad77-4442-8025-3fab6d335ae2';
 const subjectNewRequest = '[DCFund] You have new request';
+const templateNewRequest = 'f8fe08b6-2a3c-4ed3-a2c4-7e4f92a2ac7b';
+
 const subjectRequestApproved = '[DCFund] Your request is approved';
+const templateRequestApprove = '4c8eae2b-6a43-4f68-8683-36025dacd41e';
+
 const subjectRequestRejected = '[DCFund] Your request is rejected';
+const templateRequestReject = '476da337-a470-48cb-87c6-e99ed9994a1c';
+
 const subjectWithdraw = '[DCFund] You received withdrawal';
+const templateWithdraw = 'f46635a1-ad77-4442-8025-3fab6d335ae2';
+
+const subjectPayRemind = '[DCFund] Payment remind';
+const templatePayRemind = 'd-1574fe4abca24bc09ab6bf87886ef585';
 
 if (Meteor.isServer) {
     // This code only runs on the server
@@ -625,6 +631,83 @@ if (Meteor.isServer) {
             }
         },
 
+        'borrowRemind.get'() {
+            if (!Meteor.userId) {
+                throw new Meteor.Error('not-authorized');
+            }
+
+            try {
+                const result = HTTP.get(Meteor.settings.public.apiURL + '/blocks');
+                if (result) {
+                    if (result.data) {
+
+                        const blockData = _.filter(result.data.slice(1), (block) => {
+                            return block.data[0].isApproved === true;
+                        });
+
+                        // Wallet Owner
+                        const ownerStep1 = _.map(blockData, (block) => {
+                            return block.data[0].txDCFs[0];
+                        });
+                        const ownerStep2 = _.groupBy(ownerStep1, 'wallet');
+                        const walletOwner = _.mapValues(ownerStep2, (txDCFs) => {
+                            return _.last(txDCFs).walletOwner;
+                        });
+
+                        // Borrow Data
+                        const borrowStep1 = _.map(blockData, (block) => {
+                            return block.data[0].txDCFs[0]
+                        });
+                        const borrowStep2 = _.filter(borrowStep1, (txDCF) => {
+                            return txDCF.type === 2 || txDCF.type === 3
+                        });
+                        if (borrowStep2) {
+                            const borrowStep3 = _.groupBy(borrowStep2, 'wallet');
+                            const borrowStep4 = _.mapValues(borrowStep3, (wallet) => {
+                                const lastBorrowDate = new Date(_.last(wallet).timestamp);
+                                let dueDate = new Date(lastBorrowDate.getFullYear(), lastBorrowDate.getMonth() + 1, 0);
+                                if (lastBorrowDate.getDate() >= 20) {
+                                    dueDate = new Date(lastBorrowDate.getFullYear(), lastBorrowDate.getMonth() + 2, 0);
+                                }
+
+                                return {
+                                    wallet: _.last(wallet).wallet,
+                                    borrowTimestamp: lastBorrowDate.getTime(),
+                                    dueTimestamp: dueDate.getTime(),
+                                    borrowAmount: _.reduce(wallet, (sum, txDCF) => {
+                                        return txDCF.type === 2 ? sum + txDCF.amount : sum - txDCF.amount;
+                                    }, 0)
+                                };
+                            });
+
+                            // Remove complete refund Wallet
+                            const borrowStep5 = _.pickBy(borrowStep4, function (value, key) {
+                                return value.borrowAmount === 0;
+                            });
+                            const borrowStep6 = _.omit(borrowStep4, _.keys(borrowStep5));
+
+                            if (_.keys(borrowStep6).length > 0) {
+                                // Borrow Report Data
+                                const borrowReportData = _.mapKeys(borrowStep6, (value, key) => {
+                                    return walletOwner[key];
+                                });
+
+                                return borrowReportData;
+                            }
+                            return null;
+                        }
+                        return null;
+                    } else {
+                        return null;
+                    }
+                } else {
+                    return null;
+                }
+            } catch (e) {
+                throw new Meteor.Error(e.message);
+            }
+        },
+
         'withdraw.get'() {
             if (!Meteor.userId) {
                 throw new Meteor.Error('not-authorized');
@@ -759,6 +842,54 @@ if (Meteor.isServer) {
             }
         },
 
+        'payRemind.send'(requestData) {
+            if (!Meteor.userId) {
+                throw new Meteor.Error('not-authorized');
+            }
+
+            check(requestData.data.wallet, String);
+            check(requestData.data.walletOwner, String);
+            check(requestData.data.borrowAmount, Number);
+            check(requestData.data.borrowTimestamp, Number);
+            check(requestData.data.dueTimestamp, Number);
+
+            try {
+                // Send email to user
+                const user = Meteor.users.findOne({"profile.address": requestData.data.wallet});
+                console.log("user" + user);
+                if (user) {
+                    const subject = subjectPayRemind;
+                    const template = templatePayRemind;
+                    let emailData = {
+                        'data': {
+                            'templateId': template,
+                            'subject': subject,
+                            // 'toAddress': user.emails[0].address,
+                            'toAddress': 'anhtuan.hoangvu@gmail.com',
+                            'receiver': user.profile.fullName,
+                            'arrayAmount': [requestData.data.amount],
+                            'arrayDate': [formatDate(requestData.data.dueTimestamp)]
+                        }
+                    };
+                    console.log(emailData);
+                    console.log(user.emails[0].address);
+                    Meteor.call('email.send', emailData, (err, res) => {
+                        if (err) {
+                            console.log(err);
+                            throw new Meteor.Error('email-error', err.message);
+                        } else {
+                            console.log('email sent');
+                            return 'email sent';
+                        }
+                    });
+                } else {
+                    throw new Meteor.Error('unknown-wallet', 'Wallet is not identified');
+                }
+            } catch (e) {
+                throw new Meteor.Error(e, e.reason, e.details);
+            }
+        },
+
         'email.send'(emailData) {
             let header = new smtpapi();
             header.addTo(emailData.data.toAddress);
@@ -792,11 +923,13 @@ if (Meteor.isServer) {
             try {
                 const users = Meteor.users.find({
                     _id: {$ne: Meteor.user()._id}
-                }, {fields: {
-                    'profile.fullName': 1,
-                    'emails': 1,
-                    'roles': 1
-                }}).fetch();
+                }, {
+                    fields: {
+                        'profile.fullName': 1,
+                        'emails': 1,
+                        'roles': 1
+                    }
+                }).fetch();
                 return users;
             } catch (e) {
                 throw new Meteor.Error(e, e.reason, e.details);
@@ -804,6 +937,20 @@ if (Meteor.isServer) {
         },
     });
 }
+
+formatDate = (timestamp) => {
+    const date = new Date(timestamp);
+    let day = date.getDate();
+    if (day < 10) {
+        day = '0' + day;
+    }
+    let month = date.getMonth() + 1;
+    if (month < 10) {
+        month = '0' + month;
+    }
+    const year = date.getFullYear();
+    return day + '.' + month + '.' + year;
+};
 
 class TxDCF {
     constructor(wallet, walletKey, walletOwner, amount, month, year, type, timestamp) {

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 
 import AdminUsersComp from '../components/AdminUsersComp';
+import AdminBorrowComp from '../components/AdminBorrowComp';
 
 export default class AdminBoardComp extends Component {
     constructor(props) {
@@ -28,6 +29,12 @@ export default class AdminBoardComp extends Component {
                             Users
                         </a>
                     </li>
+                    <li role="presentation">
+                        <a href="#remind" aria-controls="profile" role="tab"
+                           data-toggle="tab">
+                            Remind
+                        </a>
+                    </li>
                 </ul>
                 <div className="tab-content">
                     <div role="tabpanel" className="tab-pane fade in active" id="dashboard">
@@ -35,6 +42,9 @@ export default class AdminBoardComp extends Component {
                     </div>
                     <div role="tabpanel" className="tab-pane fade" id="users">
                         <AdminUsersComp/>
+                    </div>
+                    <div role="tabpanel" className="tab-pane fade" id="remind">
+                        <AdminBorrowComp/>
                     </div>
                 </div>
             </div>

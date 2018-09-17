@@ -2,7 +2,7 @@
   "name": "DCFund-ui",
   "private": true,
   "scripts": {
-    "start": "meteor --settings settings.json"
+    "start": "meteor"
   },
   "dependencies": {
     "@babel/runtime": "^7.0.0-beta.51",

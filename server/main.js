@@ -2,7 +2,7 @@ import {Meteor} from 'meteor/meteor';
 import {Accounts} from 'meteor/accounts-base';
 import '../imports/api/blockchain.jsx';
 import './accounts-config';
-import './smtp';
+// import './smtp';
 
 Meteor.startup(() => {
     // code to run on server at startup

@@ -23,7 +23,7 @@ const subjectWithdraw = '[DCFund] You received withdrawal';
 const templateWithdraw = 'f46635a1-ad77-4442-8025-3fab6d335ae2';
 
 const subjectPayRemind = '[DCFund] Payment remind';
-const templatePayRemind = 'd-1574fe4abca24bc09ab6bf87886ef585';
+const templatePayRemind = '529fec7a-cd2e-411a-bdec-1ecbec13d41d';
 
 if (Meteor.isServer) {
     // This code only runs on the server
@@ -864,10 +864,9 @@ if (Meteor.isServer) {
                         'data': {
                             'templateId': template,
                             'subject': subject,
-                            // 'toAddress': user.emails[0].address,
-                            'toAddress': 'anhtuan.hoangvu@gmail.com',
+                            'toAddress': user.emails[0].address,
                             'receiver': user.profile.fullName,
-                            'arrayAmount': [requestData.data.amount],
+                            'arrayAmount': [requestData.data.borrowAmount],
                             'arrayDate': [formatDate(requestData.data.dueTimestamp)]
                         }
                     };
@@ -899,6 +898,7 @@ if (Meteor.isServer) {
             header.addSubstitution('type', emailData.data.arrayType);
             header.addSubstitution('user', emailData.data.arrayUser);
             header.addSubstitution('amount', emailData.data.arrayAmount);
+            header.addSubstitution('date', emailData.data.arrayDate);
             const headers = {'x-smtpapi': header.jsonString()};
 
             Email.send({

@@ -61,7 +61,7 @@ export default class AdminBorrowComp extends Component {
             if (err) {
                 NotificationManager.error((err.reason ? err.reason : 'Unknown error'), 'Error', 3000);
             } else {
-                NotificationManager.success('Reminder sent for ' + wallet, 'Success', 3000);
+                NotificationManager.success('Reminder sent to ' + wallet, 'Success', 3000);
             }
             setTimeout(() => {
                 this.setState({requestSending: false});

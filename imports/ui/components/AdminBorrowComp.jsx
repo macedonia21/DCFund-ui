@@ -3,7 +3,8 @@ import {DotLoader} from 'react-spinners';
 import {NotificationManager} from 'react-notifications';
 import * as _ from 'lodash';
 
-import BorrowRemindComp from '../components/BorrowRemindComp';
+import BorrowRemindComp from './BorrowRemindComp';
+import DepositRemindComp from './DepositRemindComp';
 
 export default class AdminBorrowComp extends Component {
     constructor(props) {
@@ -34,7 +35,6 @@ export default class AdminBorrowComp extends Component {
             if (err) {
                 this.setState({borrowReport: null});
             } else {
-                console.log(res);
                 this.setState({borrowReport: res});
             }
             this.setState({
@@ -75,11 +75,11 @@ export default class AdminBorrowComp extends Component {
         const borrowReportHeader = [1].map(() => {
             return (
                 <div key={1} className="form-group">
-                    <label className="col-xs-4 col-sm-3 control-label text-left">Full Name</label>
-                    <label className="col-xs-2 col-sm-2 control-label">Amount</label>
-                    <label className="hidden-xs col-sm-3 control-label">Borrowed Date</label>
+                    <label className="col-xs-5 col-sm-3 control-label text-left">Full Name</label>
+                    <label className="col-xs-1 col-sm-1 control-label">Amt.</label>
+                    <label className="hidden-xs col-sm-2 control-label">Borrowed Date</label>
                     <label className="col-xs-4 col-sm-3 control-label">To-be Refund Date</label>
-                    <label className="col-xs-2 col-sm-1 control-label">&nbsp;</label>
+                    <label className="col-xs-2 col-sm-3 control-label">&nbsp;</label>
                 </div>
             );
         });
@@ -106,6 +106,7 @@ export default class AdminBorrowComp extends Component {
 
         return (
             <div>
+                <DepositRemindComp/>
                 <h3>
                     Remind to pay
                 </h3>

@@ -25,6 +25,9 @@ const templateWithdraw = 'f46635a1-ad77-4442-8025-3fab6d335ae2';
 const subjectPayRemind = '[DCFund] Payment remind';
 const templatePayRemind = '529fec7a-cd2e-411a-bdec-1ecbec13d41d';
 
+const subjectMonthlyRemind = '[DCFund] Deposit for ';
+const templateMonthlyRemind = '16f719a7-e761-4fa3-bf06-92d7e0c072a6';
+
 if (Meteor.isServer) {
     // This code only runs on the server
     // Only publish tasks that are public or belong to the current user
@@ -708,6 +711,74 @@ if (Meteor.isServer) {
             }
         },
 
+        'allRemind.send'() {
+            if (!Meteor.userId) {
+                throw new Meteor.Error('not-authorized');
+            }
+
+            try {
+                const result = HTTP.get(Meteor.settings.public.apiURL + '/blocks');
+                if (result) {
+                    if (result.data) {
+                        const balanceData = _.last(result.data).balances;
+                        const fundTotal = balanceData[0].deposit;
+                        const fundOnLoan = balanceData[0].lend;
+                        const fundAvailable = fundTotal - fundOnLoan;
+
+                        // const userBalanceData = balanceData.slice(1);
+                        const userBalanceData = [balanceData[1], balanceData[2], balanceData[3]];
+
+                        // Send remind email to each user
+                        _.forEach(userBalanceData, (value) => {
+                            const user = Meteor.users.findOne({"profile.address": value.wallet});
+                            console.log("user" + user);
+                            if (user) {
+                                const monthNames = ["January", "February", "March", "April", "May", "June", "July",
+                                    "August", "September", "October", "November", "December"];
+                                const currentMonthName = monthNames[new Date().getMonth() + 1];
+                                const subject = subjectMonthlyRemind + currentMonthName;
+                                const template = templateMonthlyRemind;
+                                let emailData = {
+                                    'data': {
+                                        'templateId': template,
+                                        'subject': subject,
+                                        // 'toAddress': user.emails[0].address,
+                                        'toAddress': "anhtuan.hoangvu@gmail.com",
+                                        'receiver': user.profile.fullName,
+                                        'arrayDate': [currentMonthName],
+                                        'arrayDeposit': [value.deposit === undefined ? 0 : value.deposit],
+                                        'arrayBorrow': [value.lend === undefined ? 0 : value.lend],
+                                        'arrayTotal': [fundTotal],
+                                        'arrayLending': [fundOnLoan],
+                                        'arrayBalance': [fundAvailable]
+                                    }
+                                };
+                                console.log(emailData);
+                                console.log(user.emails[0].address);
+                                Meteor.call('email.send', emailData, (err, res) => {
+                                    if (err) {
+                                        console.log(err);
+                                        throw new Meteor.Error('email-error', err.message);
+                                    } else {
+                                        console.log('email sent');
+                                        return 'email sent';
+                                    }
+                                });
+                            }
+                        });
+
+                        return userBalanceData;
+                    } else {
+                        return null;
+                    }
+                } else {
+                    return null;
+                }
+            } catch (e) {
+                throw new Meteor.Error(e.message);
+            }
+        },
+
         'withdraw.get'() {
             if (!Meteor.userId) {
                 throw new Meteor.Error('not-authorized');
@@ -899,6 +970,11 @@ if (Meteor.isServer) {
             header.addSubstitution('user', emailData.data.arrayUser);
             header.addSubstitution('amount', emailData.data.arrayAmount);
             header.addSubstitution('date', emailData.data.arrayDate);
+            header.addSubstitution('deposit_amt', emailData.data.arrayDeposit);
+            header.addSubstitution('borrow_amt', emailData.data.arrayBorrow);
+            header.addSubstitution('total_amt', emailData.data.arrayTotal);
+            header.addSubstitution('lending_amt', emailData.data.arrayLending);
+            header.addSubstitution('balance_amt', emailData.data.arrayBalance);
             const headers = {'x-smtpapi': header.jsonString()};
 
             Email.send({

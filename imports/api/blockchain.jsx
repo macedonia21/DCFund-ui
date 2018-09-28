@@ -725,8 +725,7 @@ if (Meteor.isServer) {
                         const fundOnLoan = balanceData[0].lend;
                         const fundAvailable = fundTotal - fundOnLoan;
 
-                        // const userBalanceData = balanceData.slice(1);
-                        const userBalanceData = [balanceData[1], balanceData[2], balanceData[3]];
+                        const userBalanceData = balanceData.slice(1);
 
                         // Send remind email to each user
                         _.forEach(userBalanceData, (value) => {

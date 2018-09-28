@@ -742,8 +742,7 @@ if (Meteor.isServer) {
                                     'data': {
                                         'templateId': template,
                                         'subject': subject,
-                                        // 'toAddress': user.emails[0].address,
-                                        'toAddress': "anhtuan.hoangvu@gmail.com",
+                                        'toAddress': user.emails[0].address,
                                         'receiver': user.profile.fullName,
                                         'arrayDate': [currentMonthName],
                                         'arrayDeposit': [value.deposit === undefined ? 0 : value.deposit],

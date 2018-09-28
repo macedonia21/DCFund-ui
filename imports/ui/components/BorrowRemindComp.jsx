@@ -33,7 +33,7 @@ export default class BorrowRemindComp extends Component {
                     <button type="button" className="btn btn-info"
                             disabled={
                                 wallet.borrowAmount === 0 ||
-                                new Date() - new Date(borrowData.dueTimestamp) < 259200000 // Less then 3 days to due date
+                                new Date() - new Date(borrowData.dueTimestamp) < -259200000 // Less then 3 days to due date
                             }
                             onClick={() => {
                                 this.props.onRemind(wallet, borrowData);

@@ -253,21 +253,23 @@ class ReportPage extends Component {
                 const walletDepositTotal = walletDepositData["walletDepositTotal"];
                 if (walletDepositTotal !== 0) {
                     fundDepositTotal = fundDepositTotal + walletDepositTotal;
-                }
 
-                return (
-                    <tr key={wallet}>
-                        <th className="col-sm-4 col-xs-6">{walletDepositData.walletOwner}</th>
-                        <td className="warning col-sm-1 col-xs-3">{walletDepositTotal}</td>
-                        <td className={walletDepositCol1 > 0 ? 'success col-sm-1 hidden-xs' : 'td-amount-zero col-sm-1 hidden-xs'}>{walletDepositCol1}</td>
-                        <td className={walletDepositCol2 > 0 ? 'success col-sm-1 hidden-xs' : 'td-amount-zero col-sm-1 hidden-xs'}>{walletDepositCol2}</td>
-                        <td className={walletDepositCol3 > 0 ? 'success col-sm-1 hidden-xs' : 'td-amount-zero col-sm-1 hidden-xs'}>{walletDepositCol3}</td>
-                        <td className="info col-sm-1 col-xs-3">{walletDepositCol4}</td>
-                        <td className={walletDepositCol5 > 0 ? 'success col-sm-1 hidden-xs' : 'td-amount-zero col-sm-1 hidden-xs'}>{walletDepositCol5}</td>
-                        <td className={walletDepositCol6 > 0 ? 'success col-sm-1 hidden-xs' : 'td-amount-zero col-sm-1 hidden-xs'}>{walletDepositCol6}</td>
-                        <td className={walletDepositCol7 > 0 ? 'success col-sm-1 hidden-xs' : 'td-amount-zero col-sm-1 hidden-xs'}>{walletDepositCol7}</td>
-                    </tr>
-                );
+                    return (
+                        <tr key={wallet}>
+                            <th className="col-sm-4 col-xs-6">{walletDepositData.walletOwner}</th>
+                            <td className="warning col-sm-1 col-xs-3">{walletDepositTotal}</td>
+                            <td className={walletDepositCol1 > 0 ? 'success col-sm-1 hidden-xs' : 'td-amount-zero col-sm-1 hidden-xs'}>{walletDepositCol1}</td>
+                            <td className={walletDepositCol2 > 0 ? 'success col-sm-1 hidden-xs' : 'td-amount-zero col-sm-1 hidden-xs'}>{walletDepositCol2}</td>
+                            <td className={walletDepositCol3 > 0 ? 'success col-sm-1 hidden-xs' : 'td-amount-zero col-sm-1 hidden-xs'}>{walletDepositCol3}</td>
+                            <td className="info col-sm-1 col-xs-3">{walletDepositCol4}</td>
+                            <td className={walletDepositCol5 > 0 ? 'success col-sm-1 hidden-xs' : 'td-amount-zero col-sm-1 hidden-xs'}>{walletDepositCol5}</td>
+                            <td className={walletDepositCol6 > 0 ? 'success col-sm-1 hidden-xs' : 'td-amount-zero col-sm-1 hidden-xs'}>{walletDepositCol6}</td>
+                            <td className={walletDepositCol7 > 0 ? 'success col-sm-1 hidden-xs' : 'td-amount-zero col-sm-1 hidden-xs'}>{walletDepositCol7}</td>
+                        </tr>
+                    );
+                } else {
+                    return (null);
+                }
             });
 
             const depositTotalRowRender = [1].map(() => {
@@ -394,7 +396,8 @@ class ReportPage extends Component {
 
         const carouselChart = [1].map(() => {
             return (
-                <div key="1" id="carousel-example-generic" className="carousel slide carousel-report-chart" data-ride="carousel">
+                <div key="1" id="carousel-example-generic" className="carousel slide carousel-report-chart"
+                     data-ride="carousel">
                     <ol className="carousel-indicators">
                         <li data-target="#carousel-example-generic" data-slide-to="0" className="active"/>
                         <li data-target="#carousel-example-generic" data-slide-to="1"/>

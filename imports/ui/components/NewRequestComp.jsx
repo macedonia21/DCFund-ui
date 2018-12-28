@@ -182,10 +182,13 @@ class NewRequestComp extends Component {
         let isUser = Roles.userIsInRole(currentUser, 'user');
         let currentDate = new Date().getDate();
         let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
         if (currentDate >= 27) {
             currentMonth++;
+            if (currentMonth >= 12) {
+                currentYear++;
+            }
         }
-        let currentYear = new Date().getFullYear();
 
         let pendTransPool = this.props.pendingRequests;
         let pendTransRender = [1].map(() => {

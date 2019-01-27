@@ -179,7 +179,7 @@ class AdminOnBehalfComp extends Component {
         const userIndex = parseInt(document.getElementById('userInput').value);
         console.log(userIndex);
         console.log(this.state.users[userIndex]);
-        if (userIndex && this.state.users[userIndex]) {
+        if (this.state.users[userIndex]) {
             const user = this.state.users[userIndex];
             this.setState({userAddress: user.profile.address});
             this.setState({userPubKey: user.profile.pubKey});

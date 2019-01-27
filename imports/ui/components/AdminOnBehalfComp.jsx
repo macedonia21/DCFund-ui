@@ -177,6 +177,8 @@ class AdminOnBehalfComp extends Component {
 
     onChangeUser() {
         const userIndex = parseInt(document.getElementById('userInput').value);
+        console.log(userIndex);
+        console.log(this.state.users[userIndex]);
         if (userIndex && userIndex >= 0 && this.state.users[userIndex]) {
             const user = this.state.users[userIndex];
             this.setState({userAddress: user.profile.address});
@@ -255,9 +257,9 @@ class AdminOnBehalfComp extends Component {
                             }}>
                         {userListOptionRender}
                     </select>
-                    <div>{this.state.userFullName}</div>
-                    <div>{this.state.userAddress}</div>
-                    <div>{this.state.userPubKey}</div>
+                    <span id="helpBlock" class="help-block">{this.state.userFullName}</span>
+                    <span id="helpBlock" class="help-block">{this.state.userAddress}</span>
+                    <span id="helpBlock" class="help-block">{this.state.userPubKey}</span>
                 </div>
             )
         }
@@ -341,63 +343,62 @@ class AdminOnBehalfComp extends Component {
                         </div>
                         <div className="row">
                             <div className="col-xs-6 col-sm-6 col-md-3">
-                                <div className="form-group">
-                                    <label htmlFor="typeInput">Request type</label>
-                                    <select className="form-control input-lg"
-                                            id="typeInput"
-                                            defaultValue='Deposit'
-                                            onChange={() => {
-                                                this.onChangeRequestType();
-                                            }}>
-                                        <option value="0">Deposit</option>
-                                        <option value="2">Borrow</option>
-                                        <option value="3">Pay</option>
-                                    </select>
-                                </div>
+
+                                <label htmlFor="typeInput">Request type</label>
+                                <select className="form-control input-lg"
+                                        id="typeInput"
+                                        defaultValue='Deposit'
+                                        onChange={() => {
+                                            this.onChangeRequestType();
+                                        }}>
+                                    <option value="0">Deposit</option>
+                                    <option value="2">Borrow</option>
+                                    <option value="3">Pay</option>
+                                </select>
                             </div>
-                            <div className="col-xs-6 col-sm-6 col-md-3">
-                                <div className="form-group">
-                                    <label htmlFor="amountInput">Amount (DCF)</label>
-                                    <input type="number"
-                                           className="form-control input-lg"
-                                           id="amountInput"
-                                           placeholder="Amount" min="0.1" max={isSuperUser ? "" : "20"}
-                                           step="0.1"
-                                           defaultValue="1"/>
-                                </div>
+                        </div>
+                        <div className="col-xs-6 col-sm-6 col-md-3">
+                            <div className="form-group">
+                                <label htmlFor="amountInput">Amount (DCF)</label>
+                                <input type="number"
+                                       className="form-control input-lg"
+                                       id="amountInput"
+                                       placeholder="Amount" min="0.1" max={isSuperUser ? "" : "20"}
+                                       step="0.1"
+                                       defaultValue="1"/>
                             </div>
-                            <div className="col-xs-6 col-sm-6 col-md-3">
-                                <div className="form-group">
-                                    <label htmlFor="monthInput">Month</label>
-                                    <select className="form-control input-lg"
-                                            id="monthInput"
-                                            defaultValue={currentMonth + 1}>
-                                        <option>1</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                        <option>5</option>
-                                        <option>6</option>
-                                        <option>7</option>
-                                        <option>8</option>
-                                        <option>9</option>
-                                        <option>10</option>
-                                        <option>11</option>
-                                        <option>12</option>
-                                    </select>
-                                </div>
+                        </div>
+                        <div className="col-xs-6 col-sm-6 col-md-3">
+                            <div className="form-group">
+                                <label htmlFor="monthInput">Month</label>
+                                <select className="form-control input-lg"
+                                        id="monthInput"
+                                        defaultValue={currentMonth + 1}>
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                    <option>6</option>
+                                    <option>7</option>
+                                    <option>8</option>
+                                    <option>9</option>
+                                    <option>10</option>
+                                    <option>11</option>
+                                    <option>12</option>
+                                </select>
                             </div>
-                            <div className="col-xs-6 col-sm-6 col-md-3">
-                                <div className="form-group">
-                                    <label htmlFor="yearInput">Year</label>
-                                    <select className="form-control input-lg"
-                                            id="yearInput"
-                                            defaultValue={currentYear}>
-                                        <option>{currentYear - 1}</option>
-                                        <option>{currentYear}</option>
-                                        <option>{currentYear + 1}</option>
-                                    </select>
-                                </div>
+                        </div>
+                        <div className="col-xs-6 col-sm-6 col-md-3">
+                            <div className="form-group">
+                                <label htmlFor="yearInput">Year</label>
+                                <select className="form-control input-lg"
+                                        id="yearInput"
+                                        defaultValue={currentYear}>
+                                    <option>{currentYear - 1}</option>
+                                    <option>{currentYear}</option>
+                                    <option>{currentYear + 1}</option>
+                                </select>
                             </div>
                         </div>
                         <button type="button" className="btn btn-success btn-lg"
@@ -423,7 +424,9 @@ class AdminOnBehalfComp extends Component {
                     </form>
                 </div>
 
-                <h3>Pending requests</h3>
+                <h3> Pending
+                    requests
+                </h3>
                 <div className='container-fluid'>
                     <div className="loader-container">
                         <DotLoader
@@ -440,7 +443,8 @@ class AdminOnBehalfComp extends Component {
                         </div>}
                 </div>
             </div>
-        );
+        )
+            ;
     }
 }
 

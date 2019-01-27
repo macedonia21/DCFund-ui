@@ -179,7 +179,7 @@ class AdminOnBehalfComp extends Component {
         const userIndex = parseInt(document.getElementById('userInput').value);
         console.log(userIndex);
         console.log(this.state.users[userIndex]);
-        if (userIndex && userIndex >= 0 && this.state.users[userIndex]) {
+        if (userIndex && this.state.users[userIndex]) {
             const user = this.state.users[userIndex];
             this.setState({userAddress: user.profile.address});
             this.setState({userPubKey: user.profile.pubKey});
@@ -259,7 +259,6 @@ class AdminOnBehalfComp extends Component {
                     </select>
                     <span id="helpBlock" class="help-block">{this.state.userFullName}</span>
                     <span id="helpBlock" class="help-block">{this.state.userAddress}</span>
-                    <span id="helpBlock" class="help-block">{this.state.userPubKey}</span>
                 </div>
             )
         }

@@ -3,6 +3,7 @@ import {NotificationManager} from 'react-notifications';
 import {withTracker} from 'meteor/react-meteor-data';
 import {Link} from 'react-router-dom';
 import {DotLoader} from 'react-spinners';
+import * as _ from 'lodash';
 
 import {Requests} from '../../api/blockchain';
 

@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 
 import AdminUsersComp from '../components/AdminUsersComp';
 import AdminBorrowComp from '../components/AdminBorrowComp';
+import AdminOnBehalfComp from '../components/AdminOnBehalfComp';
 
 export default class AdminBoardComp extends Component {
     constructor(props) {

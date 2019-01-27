@@ -9,7 +9,7 @@ export default class AdminBoardComp extends Component {
 
         this.state = {
             // Loading flags
-            loadingUsers: true,
+            loadingUsers: false,
 
             // Data
             users: null
@@ -25,6 +25,8 @@ export default class AdminBoardComp extends Component {
     }
 
     fetchUsers() {
+        this.setState({loadingUsers: true});
+
         Meteor.call('admin.getUserRole', true, (err, res) => {
             if (err) {
                 this.setState({users: null});

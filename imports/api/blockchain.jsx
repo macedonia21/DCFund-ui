@@ -734,7 +734,11 @@ if (Meteor.isServer) {
                             if (user) {
                                 const monthNames = ["January", "February", "March", "April", "May", "June", "July",
                                     "August", "September", "October", "November", "December"];
-                                const currentMonthName = monthNames[new Date().getMonth() + 1];
+                                let currentMonth = new Date().getMonth() + 1;
+                                if (currentMonth >= 12) {
+                                    currentMonth = 0;
+                                }
+                                const currentMonthName = monthNames[currentMonth];
                                 const subject = subjectMonthlyRemind + currentMonthName;
                                 const template = templateMonthlyRemind;
                                 let emailData = {
@@ -1002,6 +1006,31 @@ if (Meteor.isServer) {
                         'profile.fullName': 1,
                         'emails': 1,
                         'roles': 1
+                    }
+                }).fetch();
+                return users;
+            } catch (e) {
+                throw new Meteor.Error(e, e.reason, e.details);
+            }
+        },
+
+        'admin.getUserProfile'() {
+            if (!Meteor.userId) {
+                throw new Meteor.Error('not-authorized');
+            }
+
+            if (!Roles.userIsInRole(Meteor.user(), 'administrator')) {
+                throw new Meteor.Error('not-authorized');
+            }
+
+            try {
+                const users = Meteor.users.find({
+                    _id: {$ne: Meteor.user()._id}
+                }, {
+                    fields: {
+                        'profile.address': 1,
+                        'profile.pubKey': 1,
+                        'profile.fullName': 1
                     }
                 }).fetch();
                 return users;

@@ -35,6 +35,12 @@ export default class AdminBoardComp extends Component {
                             Remind
                         </a>
                     </li>
+                    <li role="presentation">
+                        <a href="#behalf" aria-controls="profile" role="tab"
+                           data-toggle="tab">
+                            Request
+                        </a>
+                    </li>
                 </ul>
                 <div className="tab-content">
                     <div role="tabpanel" className="tab-pane fade in active" id="dashboard">
@@ -45,6 +51,9 @@ export default class AdminBoardComp extends Component {
                     </div>
                     <div role="tabpanel" className="tab-pane fade" id="remind">
                         <AdminBorrowComp/>
+                    </div>
+                    <div role="tabpanel" className="tab-pane fade" id="behalf">
+                        <AdminOnBehalfComp/>
                     </div>
                 </div>
             </div>

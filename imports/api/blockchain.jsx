@@ -518,6 +518,7 @@ if (Meteor.isServer) {
                         const walletOwner = _.mapValues(ownerStep2, (txDCFs) => {
                             return _.last(txDCFs).walletOwner;
                         });
+                        console.log(walletOwner);
 
                         // Borrow Data
                         const borrowStep1 = _.map(blockData, (block) => {
@@ -565,6 +566,7 @@ if (Meteor.isServer) {
                                         return wallet.borrowAmount;
                                     })
                                 };
+                                console.log(reportData.borrowChartData);
                             }
                         }
 

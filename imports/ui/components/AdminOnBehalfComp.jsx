@@ -60,6 +60,7 @@ class AdminOnBehalfComp extends Component {
 
     sendCoin() {
         if (!this.state.userAddress || !this.state.userPubKey || !this.state.userFullName) {
+            NotificationManager.error('User profile not found', 'Error', 3000);
             return;
         }
         const wallet = this.state.userAddress;
@@ -243,24 +244,23 @@ class AdminOnBehalfComp extends Component {
         if (users && users.length > 0) {
             let userListOptionRender = users.map((user) => {
                 return (
-                    <option value={_.indexOf(users, user)}>{user.profile.fullName}</option>
+                    <option value={_.indexOf(users, user)}>{user.profile.fullName}-{user.profile.address}</option>
                 )
             });
-
-            return (
-                <div className="form-group">
-                    <label htmlFor="userInput">For User</label>
-                    <select className="form-control input-lg"
-                            id="userInput"
-                            onChange={() => {
-                                this.onChangeUser();
-                            }}>
-                        {userListOptionRender}
-                    </select>
-                    <span id="helpBlock" class="help-block">{this.state.userFullName}</span>
-                    <span id="helpBlock" class="help-block">{this.state.userAddress}</span>
-                </div>
-            )
+            userListRender = [1].map(() => {
+                return (
+                    <div className="form-group">
+                        <label htmlFor="userInput">For User</label>
+                        <select className="form-control input-lg"
+                                id="userInput"
+                                onChange={() => {
+                                    this.onChangeUser();
+                                }}>
+                            {userListOptionRender}
+                        </select>
+                    </div>
+                )
+            });
         }
 
         let pendTransPool = this.props.pendingRequests;
@@ -443,7 +443,6 @@ class AdminOnBehalfComp extends Component {
                 </div>
             </div>
         )
-            ;
     }
 }
 

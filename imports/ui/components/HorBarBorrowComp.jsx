@@ -12,7 +12,7 @@ export default class HorBarBorrowComp extends Component {
 
     render() {
         const dataBorrow = {
-            labels: this.props.chartData.key ? this.props.chartData.key : ["NA"],
+            labels: this.props.chartData ? this.props.chartData.key : ["NA"],
             datasets: [
                 {
                     label: 'Borrowing',
@@ -21,7 +21,7 @@ export default class HorBarBorrowComp extends Component {
                     borderWidth: 1,
                     hoverBackgroundColor: 'rgba(217,83,79,0.8)',
                     hoverBorderColor: 'rgba(217,83,79,1)',
-                    data: this.props.chartData.value ? this.props.chartData.value : [0]
+                    data: this.props.chartData ? this.props.chartData.value : [0]
                 }
             ]
         };

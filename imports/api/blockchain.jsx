@@ -521,12 +521,14 @@ if (Meteor.isServer) {
                         console.log(walletOwner);
 
                         // Borrow Data
+                        console.log("borrow data");
                         const borrowStep1 = _.map(blockData, (block) => {
                             return block.data[0].txDCFs[0]
                         });
                         const borrowStep2 = _.filter(borrowStep1, (txDCF) => {
                             return txDCF.type === 2 || txDCF.type === 3
                         });
+                        console.log("borrowStep2:" + borrowStep2);
                         if (borrowStep2) {
                             const borrowStep3 = _.groupBy(borrowStep2, 'wallet');
                             const borrowStep4 = _.mapValues(borrowStep3, (wallet) => {
@@ -554,12 +556,7 @@ if (Meteor.isServer) {
                             if (_.keys(borrowStep6).length > 0) {
                                 // Borrow Report Data
                                 reportData.borrowReportData = _.mapKeys(borrowStep6, (value, key) => {
-                                    if (walletOwner[key]) {
-                                        return walletOwner[key];
-                                    }
-                                    else {
-                                        return null;
-                                    }
+                                    return walletOwner[key];
                                 });
 
                                 // Borrow Chart Data
@@ -571,11 +568,11 @@ if (Meteor.isServer) {
                                         return wallet.borrowAmount;
                                     })
                                 };
-                                console.log(reportData.borrowChartData);
                             }
                         }
 
                         // Deposit Report Data
+                        console.log("Deposit data");
                         const depositStep1 = _.map(blockData, (block) => {
                             return block.data[0].txDCFs[0]
                         });
@@ -609,6 +606,7 @@ if (Meteor.isServer) {
                         }
 
                         // Request Type chart
+                        console.log("borrow data");
                         const requestStep1 = _.map(blockData, (block) => {
                             const txDCF = block.data[0].txDCFs[0];
                             return {

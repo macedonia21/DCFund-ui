@@ -554,7 +554,12 @@ if (Meteor.isServer) {
                             if (_.keys(borrowStep6).length > 0) {
                                 // Borrow Report Data
                                 reportData.borrowReportData = _.mapKeys(borrowStep6, (value, key) => {
-                                    return walletOwner[key];
+                                    if (walletOwner[key]) {
+                                        return walletOwner[key];
+                                    }
+                                    else {
+                                        return null;
+                                    }
                                 });
 
                                 // Borrow Chart Data

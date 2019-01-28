@@ -606,7 +606,7 @@ if (Meteor.isServer) {
                         }
 
                         // Request Type chart
-                        console.log("borrow data");
+                        console.log("Request type");
                         const requestStep1 = _.map(blockData, (block) => {
                             const txDCF = block.data[0].txDCFs[0];
                             return {
@@ -627,6 +627,7 @@ if (Meteor.isServer) {
                         });
                         reportData.requestChartData = requestStep3;
 
+                        console.log(reportData);
                         return reportData;
                     } else {
                         return null;
@@ -635,6 +636,7 @@ if (Meteor.isServer) {
                     return null;
                 }
             } catch (e) {
+                console.log("exception");
                 throw new Meteor.Error(e.message);
             }
         },

@@ -61,7 +61,7 @@ export default class LoginPage extends Component {
                                 value: particleCount,
                                 density: {
                                     enable: true,
-                                    value_area: 600
+                                    value_area: 400
                                 }
                             },
                             color: {
@@ -72,12 +72,12 @@ export default class LoginPage extends Component {
                                 random: true
                             },
                             opacity: {
-                                value: 1
+                                value: 0.8
                             },
                             line_linked: {
                                 distance: 150,
                                 color: "#86bc25",
-                                opacity: 0.8,
+                                opacity: 0.6,
                                 width: 1
                             },
                             move: {
@@ -90,6 +90,36 @@ export default class LoginPage extends Component {
                         height: '100%'
                     }}
                 />
+                <div className="particles-js">
+                    <div className="poem_area">
+                        <p>
+                            Tiền đồn khi thất thủ<br/>
+                            Dài cổ chờ viện binh<br/>
+                            Ngặt nỗi lúc lâm nguy<br/>
+                            Chờ chờ hoài không thấy
+                        </p>
+                        <p>
+                            Gần chục năm về trước<br/>
+                            Sư huynh đệ đồng môn<br/>
+                            Quyết chí phải lập nên<br/>
+                            Vận quân lương tiêu cục<br/>
+                            Blockchain thập tam thức<br/>
+                            Uy chấn cả võ lâm<br/>
+                            Võ công tiêu cục phái
+                        </p>
+                        <p>
+                            Cuối tháng tải một vạn<br/>
+                            Thất thủ nhận hai mươi<br/>
+                            Tháng chạp ngày hai ba<br/>
+                            Quân lương về thành cũ<br/>
+                            Chỉ giữ lại vừa đủ<br/>
+                            Năm vạn quân giữ thành
+                        </p>
+                        <p className="poem_author">
+                            - <b>Hùng Tạ</b> -
+                        </p>
+                    </div>
+                </div>
             </div>
         );
     }

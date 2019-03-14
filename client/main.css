@@ -418,6 +418,19 @@ input[readonly]:hover, input[readonly]:focus {
     background-position: 50% 50%;
 }
 
+/* POEM */
+.poem_area {
+    padding: 30px;
+    margin: 5px;
+    font-style: italic;
+    width: 250px;
+    font-size: 14px;
+}
+
+.poem_area.poem_author {
+    text-align: right;
+}
+
 /* PRINT FIX */
 @media print {
     body {

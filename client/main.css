@@ -427,7 +427,7 @@ input[readonly]:hover, input[readonly]:focus {
     font-size: 14px;
 }
 
-.poem_area.poem_author {
+.poem_area .poem_author {
     text-align: right;
 }
 

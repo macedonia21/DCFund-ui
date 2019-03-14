@@ -61,7 +61,7 @@ export default class LoginPage extends Component {
                                 value: particleCount,
                                 density: {
                                     enable: true,
-                                    value_area: 400
+                                    value_area: 1000
                                 }
                             },
                             color: {
@@ -72,12 +72,12 @@ export default class LoginPage extends Component {
                                 random: true
                             },
                             opacity: {
-                                value: 0.8
+                                value: 0.6
                             },
                             line_linked: {
                                 distance: 150,
                                 color: "#86bc25",
-                                opacity: 0.6,
+                                opacity: 0.5,
                                 width: 1
                             },
                             move: {
